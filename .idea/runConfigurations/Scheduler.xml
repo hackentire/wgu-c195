@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Scheduler" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="net.mcentire.scheduler.SchedulerApplication" />
+    <option name="MAIN_CLASS_NAME" value="net.mcentire.app.SchedulerApplication" />
     <module name="scheduler" />
     <method v="2">
       <option name="Make" enabled="true" />
