@@ -1,6 +1,5 @@
 package net.mcentire.repository;
 
-import net.mcentire.model.Customer;
 import net.mcentire.model.User;
 
 import java.sql.ResultSet;
@@ -65,5 +64,32 @@ public class UserRepository extends EntityRepository<User> {
                 new QueryParameter(entity.getPassword())
         };
         return params;
+    }
+
+    /**
+     *
+     * @param username
+     * @param password
+     * @return the User if login was successful
+     */
+    public static User login(String username, String password) {
+        String sql = "SELECT * FROM " + tableName + " WHERE User_Name = ? AND Password = ?";
+        try {
+            Query.executeQuery(sql, new QueryParameter(username), new QueryParameter(password));
+
+            ResultSet rs = Query.getResult();
+            if (rs.next()) {
+                User activeUser = new User(
+                        rs.getInt("User_ID"),
+                        rs.getString("User_Name"),
+                        rs.getString("Password"));
+
+                return activeUser;
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
