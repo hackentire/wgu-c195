@@ -106,7 +106,16 @@ public class MainController extends BaseController {
         int countryId = AppContext.getData().getDivisions().stream().filter(p -> p.getId() == selectedCustomer.getDivisionId())
                 .iterator().next().getCountryId();
 
-        // Iterate over the length of the lists and determine the ComboBox index of both Country and Division
+        // Update ComboBox to display relevant options
+        customerDivisionCombo.setDisable(false);
+        customerDivisionCombo.setItems(
+                FXCollections.observableList(
+                        AppContext.getData().getDivisions().stream()
+                                .filter(p -> p.getCountryId() == countryId).toList()
+                )
+        );
+
+        // Iterate over the length of the lists and determine the ComboBox index of both Country and Division for selection
         OptionalInt countryIndex = IntStream.range(0, customerCountryCombo.getItems().size())
                 .filter(i -> ((Country) customerCountryCombo.getItems().get(i)).getId() == countryId).findFirst();
         OptionalInt divisionIndex = IntStream.range(0, customerDivisionCombo.getItems().size())
