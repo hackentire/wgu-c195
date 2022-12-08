@@ -34,7 +34,7 @@ public abstract class EntityRepository<T extends Identifiable> extends Repositor
      * @return an instance of the Entity created from data of the ResultSet.
      * IMPORTANT: This should assign an ID to the entity Instance
      */
-    abstract T createEntityFromResultSet(ResultSet rs) throws SQLException;
+    abstract T createEntityFromResultSet(ResultSet rs);
 
     /**
      * @param entity
@@ -52,60 +52,74 @@ public abstract class EntityRepository<T extends Identifiable> extends Repositor
      *
      * @param id the ID of the entity to be searched
      * @return an Entity T matching the provided ID
-     * @throws SQLException
      */
-    public T get(int id) throws SQLException {
-        T entity = null;
+    public T get(int id) {
+        try {
+            T entity = null;
 
-        String sql = String.format("SELECT * FROM %s WHERE %s = %d", getTableName(), getTableIdentifier(), id);
-        Query.executeQuery(sql);
-        ResultSet rs = Query.getResult();
+            String sql = String.format("SELECT * FROM %s WHERE %s = %d", getTableName(), getTableIdentifier(), id);
+            Query.executeQuery(sql);
+            ResultSet rs = Query.getResult();
 
-        if (rs.next())
-            entity = createEntityFromResultSet(rs);
+            if (rs.next())
+                entity = createEntityFromResultSet(rs);
 
-        return entity;
+            return entity;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
      *
      * @return an ObservableList of all entity records
-     * @throws SQLException
      */
-    public ObservableList<T> getAll() throws SQLException {
-        ObservableList<T> entities = FXCollections.observableArrayList();
+    public ObservableList<T> getAll() {
+        try {
+            ObservableList<T> entities = FXCollections.observableArrayList();
 
-        String sql = String.format("SELECT * FROM %s", getTableName());
-        Query.executeQuery(sql);
-        ResultSet rs = Query.getResult();
+            String sql = String.format("SELECT * FROM %s", getTableName());
+            Query.executeQuery(sql);
+            ResultSet rs = Query.getResult();
 
-        while (rs.next())
-            entities.add(createEntityFromResultSet(rs));
+            while (rs.next())
+                entities.add(createEntityFromResultSet(rs));
 
-        return entities;
+            return entities;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
      *
      * @param entity the entity to be inserted
      * @return the ID of the created entity (returns -1 on failure)
-     * @throws SQLException
      */
-    public int create(T entity) throws SQLException {
+    public int create(T entity) {
         // RUNTIME_ERROR: Fixed poorly generated string for the prepared statement (no comma between ? marks)
-        String sql = String.format("INSERT INTO %s (%s) values (%s)", getTableName(),
-                String.join(", ", getEntityCreatorFields()),
+        try {
+            String sql = String.format("INSERT INTO %s (%s) values (%s)", getTableName(),
+                    String.join(", ", getEntityCreatorFields()),
 //                String.join(",", "?".repeat(getCreateEntityFields().length))
-                // Build a string of placeholders for the prepared statement
-                String.join(", ", "?".repeat(getEntityCreatorFields().length).split("(?!^)"))
-        );
-        QueryParameter[] params = getEntityCreatorQueryParams(entity);
-        Query.executeQuery(sql, true, params);
+                    // Build a string of placeholders for the prepared statement
+                    String.join(", ", "?".repeat(getEntityCreatorFields().length).split("(?!^)"))
+            );
+            QueryParameter[] params = getEntityCreatorQueryParams(entity);
+            Query.executeQuery(sql, true, params);
 
-        if (Query.getRowsAffected() > 0 && Query.getResult().next())
+            if (Query.getRowsAffected() > 0 && Query.getResult().next())
+            {
+                // Return the generated key
+                return Query.getResult().getInt(1);
+            }
+        } catch (SQLException e)
         {
-            // Return the generated key
-            return Query.getResult().getInt(1);
+            e.printStackTrace();
         }
         return -1;
     }
@@ -114,9 +128,8 @@ public abstract class EntityRepository<T extends Identifiable> extends Repositor
      *
      * @param entity the updated entity
      * @return true if update was successful
-     * @throws SQLException
      */
-    public boolean update(T entity) throws SQLException {
+    public boolean update(T entity) {
         // Build fields string - e.g. "Field1 = ?, Field2 = ?"
         StringJoiner fields = new StringJoiner(",");
         for (String field : getEntityUpdaterFields())
@@ -132,13 +145,11 @@ public abstract class EntityRepository<T extends Identifiable> extends Repositor
      *
      * @param id the ID of the entity to be deleted
      * @return true if removal was successful
-     * @throws SQLException
      */
-    public boolean delete(int id) throws SQLException {
+    public boolean delete(int id) {
         String sql = String.format("DELETE FROM %s WHERE %s = %d", getTableName(), getTableIdentifier(), id);
         Query.executeQuery(sql);
 
         return Query.getRowsAffected() > 0;
     }
-
 }

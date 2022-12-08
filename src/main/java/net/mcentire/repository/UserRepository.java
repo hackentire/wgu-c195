@@ -39,13 +39,18 @@ public class UserRepository extends EntityRepository<User> {
     }
 
     @Override
-    User createEntityFromResultSet(ResultSet rs) throws SQLException {
-        User user = new User(
-                rs.getInt("User_ID"),
-                rs.getString("User_Name"),
-                rs.getString("Password")
-        );
-        return user;
+    User createEntityFromResultSet(ResultSet rs) {
+        try {
+            User user = new User(
+                    rs.getInt("User_ID"),
+                    rs.getString("User_Name"),
+                    rs.getString("Password")
+            );
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -67,7 +72,6 @@ public class UserRepository extends EntityRepository<User> {
     }
 
     /**
-     *
      * @param username
      * @param password
      * @return the User if login was successful
@@ -86,8 +90,7 @@ public class UserRepository extends EntityRepository<User> {
 
                 return activeUser;
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

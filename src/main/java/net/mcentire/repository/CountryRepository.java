@@ -37,12 +37,17 @@ public class CountryRepository extends EntityRepository<Country> {
     }
 
     @Override
-    Country createEntityFromResultSet(ResultSet rs) throws SQLException {
-        Country country = new Country(
-                rs.getInt("Country_ID"),
-                rs.getString("Country")
-        );
-        return country;
+    Country createEntityFromResultSet(ResultSet rs) {
+        try {
+            Country country = new Country(
+                    rs.getInt("Country_ID"),
+                    rs.getString("Country")
+            );
+            return country;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

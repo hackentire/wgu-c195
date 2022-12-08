@@ -58,39 +58,36 @@ public abstract class Repository {
 
         /**
          * Generates and primes a PreparedStatement and handles its execution
-         * @param sql a String with optional placeholders ("?") for parameter insertion
+         *
+         * @param sql                a String with optional placeholders ("?") for parameter insertion
          * @param returnGeneratedKey whether the function will place the generated ID (in the case of insertions) in the ResultSet result
-         * @param params Optional parameters to be inserted into the PreparedStatement
+         * @param params             Optional parameters to be inserted into the PreparedStatement
          * @throws SQLException
          */
-        public static void executeQuery(String sql, boolean returnGeneratedKey, QueryParameter... params) throws SQLException {
-            query = sql;
-            statement = returnGeneratedKey ?
-                    connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) :
-                    connection.prepareStatement(sql);
-
-            // Set statement parameters and indices
-            int count = 0;
-            for (QueryParameter param : params) {
-                switch (param.type)
-                {
-                    case INT: {
-                        statement.setInt(++count, (int) param.value);
-                        break;
-                    }
-                    case STRING: {
-                        statement.setString(++count, (String) param.value);
-                        break;
-                    }
-                    case TIMESTAMP: {
-                        statement.setTimestamp(++count, (Timestamp) param.value);
-                        break;
-                    }
-                    default: ++count;
-                }
-            }
-
+        public static void executeQuery(String sql, boolean returnGeneratedKey, QueryParameter... params) {
             try {
+                query = sql;
+                statement = returnGeneratedKey ?
+                        connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS) :
+                        connection.prepareStatement(query);
+
+                // Set statement parameters and indices
+                int count = 0;
+                for (QueryParameter param : params) {
+                    switch (param.type) {
+                        case INT -> {
+                            statement.setInt(++count, (int) param.value);
+                        }
+                        case STRING -> {
+                            statement.setString(++count, (String) param.value);
+                        }
+                        case TIMESTAMP -> {
+                            statement.setTimestamp(++count, (Timestamp) param.value);
+                        }
+                        default -> ++count;
+                    }
+                }
+
                 // Determine query execution
                 if (query.toLowerCase().startsWith("select")) {
                     result = statement.executeQuery();
@@ -109,7 +106,7 @@ public abstract class Repository {
             }
         }
 
-        public static void executeQuery(String sql, QueryParameter... params) throws SQLException {
+        public static void executeQuery(String sql, QueryParameter... params) {
             executeQuery(sql, false, params);
         }
 

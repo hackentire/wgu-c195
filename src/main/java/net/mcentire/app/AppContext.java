@@ -33,12 +33,12 @@ public final class AppContext {
         AppContext.activeUser = user;
     }
 
-    public ResourceBundle getResourceBundle() {
+    public static ResourceBundle getResourceBundle() {
         return resourceBundle;
     }
 
-    public void setResourceBundle(ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
+    public static void setResourceBundle(ResourceBundle resourceBundle) {
+        AppContext.resourceBundle = resourceBundle;
     }
 
 }

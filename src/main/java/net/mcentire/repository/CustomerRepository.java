@@ -45,16 +45,22 @@ public class CustomerRepository extends EntityRepository<Customer> {
     }
 
     @Override
-    Customer createEntityFromResultSet(ResultSet rs) throws SQLException {
-        Customer customer = new Customer(
-                rs.getInt("Customer_ID"),
-                rs.getString("Customer_Name"),
-                rs.getString("Address"),
-                rs.getString("Postal_Code"),
-                rs.getString("Phone"),
-                rs.getInt("Division_ID")
-        );
-        return customer;
+    Customer createEntityFromResultSet(ResultSet rs) {
+        try {
+            Customer customer = new Customer(
+                    rs.getInt("Customer_ID"),
+                    rs.getString("Customer_Name"),
+                    rs.getString("Address"),
+                    rs.getString("Postal_Code"),
+                    rs.getString("Phone"),
+                    rs.getInt("Division_ID")
+            );
+            return customer;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

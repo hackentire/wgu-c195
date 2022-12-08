@@ -7,18 +7,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
-import net.mcentire.app.App;
 import net.mcentire.app.AppContext;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
 
 public abstract class BaseController implements Initializable {
-
-    protected final static AppContext context = AppContext.getInstance();
     @FXML
-    protected static ResourceBundle resourceBundle = context.getResourceBundle();
+    protected static ResourceBundle resourceBundle = AppContext.getResourceBundle();
 
     /**
      * Helper class for changing JavaFX scenes
@@ -26,6 +24,8 @@ public abstract class BaseController implements Initializable {
     static class SceneLoader {
         private ActionEvent actionEvent;
         private static final String viewPath = "/net/mcentire/view/";
+        private static final int defaultWidth = 960;
+        private static final int defaultHeight = 720;
 
         /**
          * @param actionEvent the ActionEvent used to determine the stage
@@ -34,7 +34,7 @@ public abstract class BaseController implements Initializable {
             this.actionEvent = actionEvent;
         }
 
-        ActionEvent getActionEvent() { return actionEvent; }
+//        ActionEvent getActionEvent() { return actionEvent; }
 
         void setActionEvent(ActionEvent actionEvent) { this.actionEvent = actionEvent; }
 
@@ -43,58 +43,36 @@ public abstract class BaseController implements Initializable {
             stage.setTitle(title);
         }
 
-        /**
-         * Changes the JavaFX scene to the Main scene
-         * @throws IOException
-         */
-        void ChangeToMainScene() throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource(viewPath + "main-view.fxml"));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        private void ChangeScene(String fxml, String title, int width, int height) {
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource(viewPath + fxml));
+                Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root, width, height, false, SceneAntialiasing.BALANCED);
+                stage.setTitle(title);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
 
-            Scene scene = new Scene(root, 900, 512);
-            stage.setTitle(resourceBundle.getString("scheduler") + " 1.0");
-            stage.setScene(scene);
-            stage.show();
+        private void ChangeScene(String fxml, String title) {
+            ChangeScene(fxml, title, defaultWidth, defaultHeight);
         }
 
         /**
          * Changes the JavaFX scene to the Main scene
-         * @throws IOException
          */
-        void ChangeToLoginScene() throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource(viewPath + "login-view.fxml"));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-
-            Scene scene = new Scene(root, 900, 512);
-            stage.setTitle(resourceBundle.getString("welcome"));
-            stage.setScene(scene);
-            stage.show();
+        void ChangeToMainScene() {
+            ChangeScene("main-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
         }
 
         /**
-         * Changes the JavaFX scene to the Add Part scene
-         * @throws IOException
+         * Changes the JavaFX scene to the Log In scene
          */
-        void ChangeToCustomerScene() throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource(viewPath + "customer-view.fxml"));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-
-            Scene scene = new Scene(root, 900, 512);
-            stage.setScene(scene);
-            stage.show();
-        }
-
-        /**
-         * Changes the JavaFX scene to the Add Product scene
-         * @throws IOException
-         */
-        void ChangeToAppointmentScene() throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource(viewPath + "appointment-view.fxml"));
-            Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
-
-            Scene scene = new Scene(root, 900, 512);
-            stage.setScene(scene);
-            stage.show();
+        void ChangeToLoginScene() {
+            ChangeScene("login-view.fxml", resourceBundle.getString("welcome"), defaultWidth, 512);
         }
     }
 }

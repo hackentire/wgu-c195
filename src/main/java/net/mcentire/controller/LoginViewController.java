@@ -2,15 +2,20 @@ package net.mcentire.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import net.mcentire.app.AppContext;
 import net.mcentire.model.User;
 import net.mcentire.repository.UserRepository;
+import net.mcentire.util.Logger;
 
 import java.net.URL;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class LoginViewController extends BaseController {
     @FXML
@@ -37,12 +42,22 @@ public class LoginViewController extends BaseController {
     public void onSubmitAction(ActionEvent actionEvent) {
         User authenticatedUser = UserRepository.login(userField.getText(), passwordField.getText());
 
-        // Do nothing if credentials provided were bad
-        if (authenticatedUser == null)
+        // Clear password field and log attempt on failure
+        if (authenticatedUser == null) {
+            passwordField.setText("");
+            Logger.log(userField.getText(), false);
+
+            Alert alert = new Alert(Alert.AlertType.WARNING, resourceBundle.getString("failedLogin"));
+            alert.showAndWait();
             return;
+        }
+
+        // Log successful attempt
+        Logger.log(authenticatedUser.getName(), true);
 
         // Update user context
-        context.setActiveUser(authenticatedUser);
+        AppContext.setActiveUser(authenticatedUser);
+        new SceneLoader(actionEvent).ChangeToMainScene();
 
         // Check if any relevant meetings are occurring soon
     }
@@ -70,6 +85,7 @@ public class LoginViewController extends BaseController {
     @FXML
     private void UpdateLocalization(ActionEvent actionEvent) {
         URL imagePath = getClass().getResource("/net/mcentire/view/" + resourceBundle.getString("splashSrc"));
+        assert imagePath != null;
         loginSplash.setImage(new Image(imagePath.toString()));
         localeLabel.setText("Locale: " + resourceBundle.getString("locale"));
         loginLabel.setText(resourceBundle.getString("logIn"));
@@ -87,14 +103,14 @@ public class LoginViewController extends BaseController {
      * @param actionEvent
      */
     public void toggleLanguage(ActionEvent actionEvent) {
-        Locale newLocale = (Locale.getDefault().getLanguage() == "fr") ?
+        Locale newLocale = (Objects.equals(Locale.getDefault().getLanguage(), "fr")) ?
                 new Locale("en", "US") : new Locale("fr", "FR");
 
         Locale.setDefault(newLocale);
-        context.setResourceBundle(
+        AppContext.setResourceBundle(
                 ResourceBundle.getBundle("localization/localization", Locale.getDefault())
         );
-        resourceBundle = context.getResourceBundle();
+        resourceBundle = AppContext.getResourceBundle();
         UpdateLocalization(actionEvent);
     }
 }

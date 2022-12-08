@@ -1,7 +1,7 @@
 package net.mcentire.repository;
 
 import net.mcentire.model.Appointment;
-import net.mcentire.util.TimeConverter;
+import net.mcentire.util.Time;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,20 +54,25 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
     }
 
     @Override
-    Appointment createEntityFromResultSet(ResultSet rs) throws SQLException {
-        Appointment appointment = new Appointment(
-                rs.getInt("Appointment_ID"),
-                rs.getString("Title"),
-                rs.getString("Description"),
-                rs.getString("Location"),
-                rs.getString("Type"),
-                TimeConverter.toLocalZoneDateTime(rs.getTimestamp("Start")),
-                TimeConverter.toLocalZoneDateTime(rs.getTimestamp("End")),
-                rs.getInt("Customer_ID"),
-                rs.getInt("User_ID"),
-                rs.getInt("Contact_ID")
-        );
-        return appointment;
+    Appointment createEntityFromResultSet(ResultSet rs) {
+        try {
+            Appointment appointment = new Appointment(
+                    rs.getInt("Appointment_ID"),
+                    rs.getString("Title"),
+                    rs.getString("Description"),
+                    rs.getString("Location"),
+                    rs.getString("Type"),
+                    Time.toLocalZoneDateTime(rs.getTimestamp("Start")),
+                    Time.toLocalZoneDateTime(rs.getTimestamp("End")),
+                    rs.getInt("Customer_ID"),
+                    rs.getInt("User_ID"),
+                    rs.getInt("Contact_ID")
+            );
+            return appointment;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -77,8 +82,8 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                 new QueryParameter(entity.getDescription()),
                 new QueryParameter(entity.getLocation()),
                 new QueryParameter(entity.getType()),
-                new QueryParameter(TimeConverter.toUtcTimestamp(entity.getStart())),
-                new QueryParameter(TimeConverter.toUtcTimestamp(entity.getEnd())),
+                new QueryParameter(Time.toUtcTimestamp(entity.getStart())),
+                new QueryParameter(Time.toUtcTimestamp(entity.getEnd())),
                 new QueryParameter(entity.getCustomerId()),
                 new QueryParameter(entity.getUserId()),
                 new QueryParameter(entity.getContactId())
@@ -93,8 +98,8 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                 new QueryParameter(entity.getDescription()),
                 new QueryParameter(entity.getLocation()),
                 new QueryParameter(entity.getType()),
-                new QueryParameter(TimeConverter.toUtcTimestamp(entity.getStart())),
-                new QueryParameter(TimeConverter.toUtcTimestamp(entity.getEnd())),
+                new QueryParameter(Time.toUtcTimestamp(entity.getStart())),
+                new QueryParameter(Time.toUtcTimestamp(entity.getEnd())),
                 new QueryParameter(entity.getCustomerId()),
                 new QueryParameter(entity.getUserId()),
                 new QueryParameter(entity.getContactId())

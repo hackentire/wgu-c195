@@ -39,13 +39,18 @@ public class DivisionRepository extends EntityRepository<Division> {
     }
 
     @Override
-    Division createEntityFromResultSet(ResultSet rs) throws SQLException {
-        Division division = new Division(
-                rs.getInt("Division_ID"),
-                rs.getString("Division"),
-                rs.getInt("Country_ID")
-        );
-        return division;
+    Division createEntityFromResultSet(ResultSet rs) {
+        try {
+            Division division = new Division(
+                    rs.getInt("Division_ID"),
+                    rs.getString("Division"),
+                    rs.getInt("Country_ID")
+            );
+            return division;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
