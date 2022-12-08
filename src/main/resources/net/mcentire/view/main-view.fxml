@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.mcentire.controller.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.mcentire.controller.MainController">
    <children>
       <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -62,7 +62,7 @@
         <tabs>
           <Tab text="Appointments">
                <content>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+                  <SplitPane fx:id="appointmentSplitPane" dividerPositions="0.5" orientation="VERTICAL">
                      <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="0.0">
                            <children>
@@ -102,9 +102,9 @@
                                           </HBox>
                                           <HBox alignment="CENTER_RIGHT" spacing="6.0" HBox.hgrow="NEVER">
                                              <children>
-                                                <Button fx:id="addAppointmentButton" disable="true" mnemonicParsing="false" onAction="#onAddAppointment" text="Add" HBox.hgrow="NEVER" />
-                                                <Button fx:id="editAppointmentButton" mnemonicParsing="false" onAction="#onEditAppointment" text="Edit" HBox.hgrow="NEVER" />
-                                                <Button mnemonicParsing="false" onAction="#onCancelAppointment" text="Cancel" HBox.hgrow="NEVER" />
+                                                <Button fx:id="addAppointmentButton" mnemonicParsing="false" onAction="#onAddAppointment" text="Add" HBox.hgrow="NEVER" />
+                                                <Button fx:id="editAppointmentButton" disable="true" mnemonicParsing="false" onAction="#onEditAppointment" text="Edit" HBox.hgrow="NEVER" />
+                                                <Button fx:id="removeAppointmentButton" disable="true" mnemonicParsing="false" onAction="#onCancelAppointment" text="Remove" HBox.hgrow="NEVER" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -181,7 +181,7 @@
                                                 <Label text="Start Datetime" GridPane.rowIndex="3" />
                                                 <Label text="End Datetime" GridPane.rowIndex="4" />
                                                 <Label text="ID" />
-                                                <TextField fx:id="appointmentIdField" disable="true" promptText="Auto-generated" GridPane.columnIndex="1" />
+                                                <TextField fx:id="appointmentIdField" disable="true" editable="false" text="Auto-generated" GridPane.columnIndex="1" />
                                                 <TextArea fx:id="appointmentDescriptionField" prefWidth="299.0" GridPane.columnIndex="3" GridPane.rowSpan="2" />
                                                 <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                    <children>
@@ -225,7 +225,7 @@
                </content></Tab>
           <Tab text="Customers">
                <content>
-                  <SplitPane dividerPositions="0.7">
+                  <SplitPane fx:id="customerSplitPane" dividerPositions="0.7">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="649.0" prefWidth="539.0">
                            <children>
@@ -250,9 +250,9 @@
                                        <children>
                                           <HBox alignment="CENTER_RIGHT" spacing="6.0" HBox.hgrow="NEVER">
                                              <children>
-                                                <Button fx:id="addCustomerButton" disable="true" mnemonicParsing="false" onAction="#onAddCustomer" text="Add" HBox.hgrow="NEVER" />
-                                                <Button fx:id="modifyCustomerButton" mnemonicParsing="false" onAction="#onModifyCustomer" text="Modify" HBox.hgrow="NEVER" />
-                                                <Button mnemonicParsing="false" onAction="#onDeleteCustomer" text="Delete" HBox.hgrow="NEVER" />
+                                                <Button fx:id="addCustomerButton" mnemonicParsing="false" onAction="#onAddCustomer" text="Add" HBox.hgrow="NEVER" />
+                                                <Button fx:id="modifyCustomerButton" disable="true" mnemonicParsing="false" onAction="#onModifyCustomer" text="Modify" HBox.hgrow="NEVER" />
+                                                <Button fx:id="deleteCustomerButton" disable="true" mnemonicParsing="false" onAction="#onDeleteCustomer" text="Delete" HBox.hgrow="NEVER" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -273,7 +273,7 @@
                                  </columnResizePolicy>
                               </TableView>
                            </children></AnchorPane>
-                      <AnchorPane minWidth="0.0">
+                      <AnchorPane maxWidth="300.0" minWidth="0.0" prefWidth="300.0">
                            <children>
                               <VBox prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
@@ -341,7 +341,7 @@
                                           <Label text="Country" GridPane.rowIndex="5" />
                                           <Label text="Division" GridPane.rowIndex="6" />
                                           <Label text="ID" />
-                                          <TextField fx:id="customerIdField" disable="true" promptText="Auto-generated" GridPane.columnIndex="1">
+                                          <TextField fx:id="customerIdField" disable="true" editable="false" text="Auto-generated" GridPane.columnIndex="1">
                                              <GridPane.margin>
                                                 <Insets right="12.0" />
                                              </GridPane.margin>

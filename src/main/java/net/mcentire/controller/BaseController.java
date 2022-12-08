@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextInputControl;
 import javafx.stage.Stage;
 import net.mcentire.app.AppContext;
 
@@ -17,6 +19,19 @@ import java.util.ResourceBundle;
 public abstract class BaseController implements Initializable {
     @FXML
     protected static ResourceBundle resourceBundle = AppContext.getResourceBundle();
+
+    // Extension method preferable
+    static class UiUtil {
+        public static void clear(TextInputControl... control) {
+            for (TextInputControl el : control)
+                el.setText("");
+        }
+
+        public static void clear(ComboBox... control) {
+            for (ComboBox el : control)
+                el.getSelectionModel().clearSelection();
+        }
+    }
 
     /**
      * Helper class for changing JavaFX scenes

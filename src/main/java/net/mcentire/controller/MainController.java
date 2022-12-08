@@ -18,12 +18,23 @@ import net.mcentire.repository.CustomerRepository;
 import javafx.util.Callback;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.OptionalInt;
 import java.util.ResourceBundle;
+import java.util.stream.IntStream;
 
 public class MainController extends BaseController {
 
-    public Label loggedInAsLabel;
-    public Label appTitleLabel;
+    @FXML
+    private Label loggedInAsLabel;
+    @FXML
+    private Label appTitleLabel;
+
+    @FXML
+    private SplitPane appointmentSplitPane;
+    @FXML
+    private SplitPane customerSplitPane;
+
     // Customer elements
     @FXML
     private TableColumn customerIdColumn;
@@ -58,35 +69,62 @@ public class MainController extends BaseController {
     @FXML
     private Button modifyCustomerButton;
     @FXML
+    private Button deleteCustomerButton;
+    @FXML
     private TableView<Customer> customerTable;
 
     private boolean isModifying = false;
     private Customer selectedCustomer = null;
 
-    private void toggleAddOrModify() {
-        isModifying ^= true;
-        addCustomerButton.setDisable(!isModifying);
-        modifyCustomerButton.setDisable(isModifying);
-        customerNameField.requestFocus();
-
-        if (isModifying && selectedCustomer != null) {
-            customerIdField.setText(String.valueOf(selectedCustomer.getId()));
-            customerNameField.setText(selectedCustomer.getName());
-            customerAddressField.setText(selectedCustomer.getAddress());
-            customerPostalCodeField.setText(selectedCustomer.getPostalCode());
-            customerPhoneField.setText(selectedCustomer.getPhoneNumber());
-        }
-    }
-
     public void onAddCustomer(ActionEvent actionEvent) {
-        toggleAddOrModify();
+        isModifying = false;
+        addCustomerButton.setDisable(true);
+        modifyCustomerButton.setDisable(false);
+        addOrModifyCustomerLabel.setText("Add a Customer");
+        customerIdField.setText("Auto-generated");
+        customerSplitPane.setDividerPositions(.5);
+        customerNameField.requestFocus();
     }
 
     public void onModifyCustomer(ActionEvent actionEvent) {
-        toggleAddOrModify();
+        if (selectedCustomer == null)
+            return;
+
+        isModifying = true;
+        addCustomerButton.setDisable(false);
+        modifyCustomerButton.setDisable(true);
+        addOrModifyCustomerLabel.setText("Modify Customer");
+        customerIdField.setText("");
+        customerSplitPane.setDividerPositions(.5);
+
+        customerIdField.setText(String.valueOf(selectedCustomer.getId()));
+        customerNameField.setText(selectedCustomer.getName());
+        customerAddressField.setText(selectedCustomer.getAddress());
+        customerPostalCodeField.setText(selectedCustomer.getPostalCode());
+        customerPhoneField.setText(selectedCustomer.getPhoneNumber());
+
+        int countryId = AppContext.getData().getDivisions().stream().filter(p -> p.getId() == selectedCustomer.getDivisionId())
+                .iterator().next().getCountryId();
+
+        // Iterate over the length of the lists and determine the ComboBox index of both Country and Division
+        OptionalInt countryIndex = IntStream.range(0, customerCountryCombo.getItems().size())
+                .filter(i -> ((Country) customerCountryCombo.getItems().get(i)).getId() == countryId).findFirst();
+        OptionalInt divisionIndex = IntStream.range(0, customerDivisionCombo.getItems().size())
+                .filter(i -> ((Division) customerDivisionCombo.getItems().get(i)).getId() == selectedCustomer.getDivisionId()).findFirst();
+
+        if (countryIndex.isPresent())
+            customerCountryCombo.getSelectionModel().select(countryIndex.getAsInt());
+        if (divisionIndex.isPresent())
+            customerDivisionCombo.getSelectionModel().select(divisionIndex.getAsInt());
+
+        customerNameField.requestFocus();
     }
 
     public void onDeleteCustomer(ActionEvent actionEvent) {
+        if (selectedCustomer == null)
+            return;
+
+
     }
 
     /**
@@ -110,16 +148,39 @@ public class MainController extends BaseController {
     }
 
     public void onSaveChangesCustomer(ActionEvent actionEvent) {
+
     }
 
     public void onCancelChangesCustomer(ActionEvent actionEvent) {
+        clearCustomerForm();
+        customerSplitPane.setDividerPositions(1);
+        addCustomerButton.setDisable(false);
+        modifyCustomerButton.setDisable(false);
+    }
+
+    private void clearCustomerForm() {
+        UiUtil.clear(customerNameField, customerAddressField, customerPhoneField, customerPostalCodeField);
+        UiUtil.clear(customerCountryCombo, customerDivisionCombo);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loggedInAsLabel.setText("Logged in as: " + AppContext.getActiveUser().getName());
+        loggedInAsLabel.setText("Logged in as [" + AppContext.getActiveUser().getName() + "]");
+
+        appointmentSplitPane.setDividerPositions(1);
+        customerSplitPane.setDividerPositions(1);
 
         BindCustomerElements();
+        //BindAppointmentElements();
+
+        checkUserAppointments();
+    }
+
+    private void checkUserAppointments() {
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
+
+
     }
 
     private void BindCustomerElements() {
@@ -129,6 +190,7 @@ public class MainController extends BaseController {
         ObservableList<Division> divisions = AppContext.getData().getDivisions();
         ObservableList<Country> countries = AppContext.getData().getCountries();
 
+        // ComboBox setup
         customerCountryCombo.setItems(countries);
         customerDivisionCombo.setItems(FXCollections.observableArrayList());
         customerCountryCombo.setConverter(new StringConverter<Country>() {
@@ -156,6 +218,7 @@ public class MainController extends BaseController {
             }
         });
 
+        // Table setup
         customerTable.setItems(customers);
         // Bind table
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -184,6 +247,14 @@ public class MainController extends BaseController {
 
             ObservableValue<String> cellValue = new SimpleStringProperty(divisionName);
             return cellValue;
+        });
+
+        // Add a listener to the table to handle selection changes (to enable/disable modify&delete buttons)
+        customerTable.getSelectionModel().selectedItemProperty().addListener((value, oldSelection, newSelection) -> {
+            boolean hasSelection = (newSelection != null);
+            modifyCustomerButton.setDisable(!hasSelection);
+            deleteCustomerButton.setDisable(!hasSelection);
+            selectedCustomer = newSelection;
         });
 
         // Earlier failed attempt at a custom CellValueFactory

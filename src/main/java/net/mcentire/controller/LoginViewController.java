@@ -2,7 +2,6 @@ package net.mcentire.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,7 +14,6 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class LoginViewController extends BaseController {
     @FXML
@@ -44,7 +42,7 @@ public class LoginViewController extends BaseController {
 
         // Clear password field and log attempt on failure
         if (authenticatedUser == null) {
-            passwordField.setText("");
+            UiUtil.clear(passwordField);
             Logger.log(userField.getText(), false);
 
             Alert alert = new Alert(Alert.AlertType.WARNING, resourceBundle.getString("failedLogin"));
@@ -75,8 +73,7 @@ public class LoginViewController extends BaseController {
      * @param actionEvent
      */
     public void onClearAction(ActionEvent actionEvent) {
-        userField.setText("");
-        passwordField.setText("");
+        UiUtil.clear(userField, passwordField);
         // Refocus username field
         userField.requestFocus();
     }
