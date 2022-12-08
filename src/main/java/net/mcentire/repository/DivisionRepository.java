@@ -1,12 +1,12 @@
 package net.mcentire.repository;
 
+import javafx.collections.ObservableList;
 import net.mcentire.model.Division;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DivisionRepository extends EntityRepository<Division> {
-
     private static final String tableName = "first_level_divisions";
     private static final String tableIdentifier = "Division_ID";
     private static final String[] entityCreatorFields = {

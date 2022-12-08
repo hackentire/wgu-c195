@@ -72,7 +72,7 @@ public abstract class BaseController implements Initializable {
          * Changes the JavaFX scene to the Log In scene
          */
         void ChangeToLoginScene() {
-            ChangeScene("login-view.fxml", resourceBundle.getString("welcome"), defaultWidth, 512);
+            ChangeScene("login-view.fxml", resourceBundle.getString("welcome"), defaultWidth, 480);
         }
     }
 }

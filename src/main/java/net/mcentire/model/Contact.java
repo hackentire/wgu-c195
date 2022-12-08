@@ -1,7 +1,6 @@
 package net.mcentire.model;
 
-public class Contact implements Identifiable {
-    final private int id;
+public class Contact extends Entity {
     private String name;
     private String email;
 
@@ -12,7 +11,7 @@ public class Contact implements Identifiable {
     }
 
     /**
-     * @return a clearer string representation for testing purposes
+     * @return more apparent string representation for testing purposes
      */
     @Override
     public String toString() {
@@ -45,12 +44,5 @@ public class Contact implements Identifiable {
      */
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    /**
-     * @return the contact ID
-     */
-    public int getId() {
-        return id;
     }
 }

@@ -1,6 +1,8 @@
 package net.mcentire.app;
 
-import net.mcentire.model.User;
+import javafx.collections.ObservableList;
+import net.mcentire.model.*;
+
 import java.util.ResourceBundle;
 
 /**
@@ -12,17 +14,20 @@ public final class AppContext {
     private static ResourceBundle resourceBundle;
     private static User activeUser = null;
 
+    private static AppData data = new AppData();
+
     private AppContext() {}
 
-    /**
-     * Only instantiate and use one AppDataSingleton instance across the application
-     */
     public static AppContext getInstance() {
         if (single_instance == null)
         {
             single_instance = new AppContext();
         }
         return single_instance;
+    }
+
+    public static AppData getData() {
+        return data;
     }
 
     public static User getActiveUser() {
@@ -41,4 +46,51 @@ public final class AppContext {
         AppContext.resourceBundle = resourceBundle;
     }
 
+    public static class AppData {
+        private ObservableList<Customer> customers;
+        private ObservableList<Appointment> appointments;
+        private ObservableList<Country> countries;
+        private ObservableList<Division> divisions;
+        private ObservableList<Contact> contacts;
+
+        public ObservableList<Customer> getCustomers() {
+            return customers;
+        }
+
+        public void setCustomers(ObservableList<Customer> customers) {
+            this.customers = customers;
+        }
+
+        public ObservableList<Appointment> getAppointments() {
+            return appointments;
+        }
+
+        public void setAppointments(ObservableList<Appointment> appointments) {
+            this.appointments = appointments;
+        }
+
+        public ObservableList<Country> getCountries() {
+            return countries;
+        }
+
+        public void setCountries(ObservableList<Country> countries) {
+            this.countries = countries;
+        }
+
+        public ObservableList<Division> getDivisions() {
+            return divisions;
+        }
+
+        public void setDivisions(ObservableList<Division> divisions) {
+            this.divisions = divisions;
+        }
+
+        public ObservableList<Contact> getContacts() {
+            return contacts;
+        }
+
+        public void setContacts(ObservableList<Contact> contacts) {
+            this.contacts = contacts;
+        }
+    }
 }

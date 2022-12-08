@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import net.mcentire.app.AppContext;
 import net.mcentire.model.User;
-import net.mcentire.repository.UserRepository;
+import net.mcentire.repository.*;
 import net.mcentire.util.Logger;
 
 import java.net.URL;
@@ -57,6 +57,14 @@ public class LoginViewController extends BaseController {
 
         // Update user context
         AppContext.setActiveUser(authenticatedUser);
+
+        // Fetch initial data for forms
+        AppContext.getData().setCustomers(new CustomerRepository().getAll());
+        AppContext.getData().setAppointments(new AppointmentRepository().getAll());
+        AppContext.getData().setCountries(new CountryRepository().getAll());
+        AppContext.getData().setDivisions(new DivisionRepository().getAll());
+        AppContext.getData().setContacts(new ContactRepository().getAll());
+
         new SceneLoader(actionEvent).ChangeToMainScene();
 
         // Check if any relevant meetings are occurring soon
