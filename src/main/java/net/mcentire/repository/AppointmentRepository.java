@@ -1,6 +1,8 @@
 package net.mcentire.repository;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import net.mcentire.app.App;
 import net.mcentire.model.Appointment;
 import net.mcentire.util.Time;
 
@@ -63,8 +65,8 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                     rs.getString("Description"),
                     rs.getString("Location"),
                     rs.getString("Type"),
-                    Time.toLocalZoneDateTime(rs.getTimestamp("Start")),
-                    Time.toLocalZoneDateTime(rs.getTimestamp("End")),
+                    Time.toLocalDateTime(rs.getTimestamp("Start")),
+                    Time.toLocalDateTime(rs.getTimestamp("End")),
                     rs.getInt("Customer_ID"),
                     rs.getInt("User_ID"),
                     rs.getInt("Contact_ID")
@@ -106,5 +108,25 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                 new QueryParameter(entity.getContactId())
         };
         return params;
+    }
+
+    public ObservableList<Appointment> getCustomerAppointments(int id) {
+        ObservableList<Appointment> results = FXCollections.observableArrayList();
+
+        try {
+            String sql = String.format("SELECT * FROM %s WHERE Customer_ID = %d", getTableName(), id);
+            Query.executeQuery(sql);
+            ResultSet rs = Query.getResult();
+
+            while (rs.next())
+                results.add(createEntityFromResultSet(rs));
+
+            return results;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return results;
     }
 }

@@ -1,6 +1,6 @@
 package net.mcentire.model;
 
-public class Contact extends Entity {
+public class Contact extends Entity implements Named {
     private String name;
     private String email;
 

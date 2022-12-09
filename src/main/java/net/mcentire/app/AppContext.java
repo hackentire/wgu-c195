@@ -16,11 +16,11 @@ public final class AppContext {
 
     private static AppData data = new AppData();
 
-    private AppContext() {}
+    private AppContext() {
+    }
 
     public static AppContext getInstance() {
-        if (single_instance == null)
-        {
+        if (single_instance == null) {
             single_instance = new AppContext();
         }
         return single_instance;
@@ -52,6 +52,7 @@ public final class AppContext {
         private ObservableList<Country> countries;
         private ObservableList<Division> divisions;
         private ObservableList<Contact> contacts;
+        private ObservableList<User> users;
 
         public ObservableList<Customer> getCustomers() {
             return customers;
@@ -91,6 +92,14 @@ public final class AppContext {
 
         public void setContacts(ObservableList<Contact> contacts) {
             this.contacts = contacts;
+        }
+
+        public ObservableList<User> getUsers() {
+            return users;
+        }
+
+        public void setUsers(ObservableList<User> users) {
+            this.users = users;
         }
     }
 }

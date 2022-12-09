@@ -40,7 +40,7 @@ public abstract class BaseController implements Initializable {
         private ActionEvent actionEvent;
         private static final String viewPath = "/net/mcentire/view/";
         private static final int defaultWidth = 960;
-        private static final int defaultHeight = 720;
+        private static final int defaultHeight = 640;
 
         /**
          * @param actionEvent the ActionEvent used to determine the stage
@@ -79,8 +79,16 @@ public abstract class BaseController implements Initializable {
         /**
          * Changes the JavaFX scene to the Main scene
          */
-        void ChangeToMainScene() {
-            ChangeScene("main-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
+        void ChangeToCustomerScene() {
+            ChangeScene("customer-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
+        }
+
+        void ChangeToAppointmentScene() {
+            ChangeScene("appointment-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
+        }
+
+        void ChangeToReportScene() {
+            ChangeScene("report-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
         }
 
         /**

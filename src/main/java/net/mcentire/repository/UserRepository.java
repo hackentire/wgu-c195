@@ -1,5 +1,7 @@
 package net.mcentire.repository;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import net.mcentire.model.User;
 
 import java.sql.ResultSet;
@@ -91,6 +93,32 @@ public class UserRepository extends EntityRepository<User> {
                 return activeUser;
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public ObservableList<User> getAll() {
+        try {
+            ObservableList<User> users = FXCollections.observableArrayList();
+
+            String sql = String.format("SELECT User_ID, User_Name FROM %s", getTableName());
+            Query.executeQuery(sql);
+            ResultSet rs = Query.getResult();
+
+            while (rs.next())
+                users.add(
+                        new User(
+                                rs.getInt("User_ID"),
+                                rs.getString("User_Name"),
+                                "" // Hide password from inspection
+                        )
+                );
+
+            return users;
+        } catch (SQLException e)
+        {
             e.printStackTrace();
         }
         return null;

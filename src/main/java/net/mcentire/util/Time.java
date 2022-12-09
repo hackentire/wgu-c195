@@ -1,32 +1,49 @@
 package net.mcentire.util;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 public class Time {
 
     /**
      *
-     * @param timestamp the timestamp value to be converted
-     * @return a LocalDateTime using the system's Zone
+     * @return the current time in UTC
      */
-    public static LocalDateTime toLocalZoneDateTime(Timestamp timestamp) {
-//        return timestamp.toLocalDateTime().atZone(ZoneId.systemDefault());
-        return LocalDateTime.ofInstant(timestamp.toInstant(), ZoneId.systemDefault());
+    public static LocalDateTime getCurrentUtcTime() {
+        return LocalDateTime.now(ZoneOffset.UTC);
     }
 
     /**
      *
-     * @param localTime the LocalDateTime to be converted
-     * @return a UTC Timestamp representation of the provided LocalDateTime
+     * @param utcTimestamp a DB originated UTC timestamp
+     * @return the local time representation of the timestamp
      */
-    public static Timestamp toUtcTimestamp(LocalDateTime localTime) {
-        return Timestamp.valueOf(localTime);
+    public static LocalDateTime toLocalDateTime(Timestamp utcTimestamp) {
+        return utcTimestamp.toInstant().atZone(Clock.systemDefaultZone().getZone()).toLocalDateTime();
     }
 
-    public static String getCurrentUtcTime() {
-        return Instant.now().toString();
+    /**
+     *
+     * @param localDateTime the local time to convert into a UTC timestamp
+     * @return a UTC timestamp representation of the datetime
+     */
+    public static Timestamp toUtcTimestamp(LocalDateTime localDateTime) {
+        return Timestamp.valueOf(localDateTime.atZone(Clock.systemDefaultZone().getZone())
+                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
+    }
+
+    /**
+     *
+     * @param localDateTime the local time to convert into a UTC timestamp
+     * @return a UTC LocalDateTime representation of the datetime
+     */
+    public static LocalDateTime toUtcLocalDateTime(LocalDateTime localDateTime) {
+        return localDateTime.atZone(Clock.systemDefaultZone().getZone())
+                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    }
+
+    public static LocalDateTime toEstLocalDateTime(LocalDateTime localDateTime) {
+        return localDateTime.atZone(Clock.systemDefaultZone().getZone())
+                .withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();
     }
 }

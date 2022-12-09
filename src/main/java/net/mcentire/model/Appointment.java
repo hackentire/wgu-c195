@@ -17,6 +17,18 @@ public class Appointment extends Entity {
     private int userId;
     private int contactId;
 
+    /**
+     *
+     * @param title
+     * @param description
+     * @param location
+     * @param type
+     * @param start the start local LocalDateTime (not UTC)
+     * @param end the end local LocalDateTime (not UTC)
+     * @param customerId
+     * @param userId
+     * @param contactId
+     */
     public Appointment(String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) {
         this.title = title;
         this.description = description;
@@ -29,6 +41,19 @@ public class Appointment extends Entity {
         this.contactId = contactId;
     }
 
+    /**
+     *
+     * @param id
+     * @param title
+     * @param description
+     * @param location
+     * @param type
+     * @param start the start local LocalDateTime (not UTC)
+     * @param end the end local LocalDateTime (not UTC)
+     * @param customerId
+     * @param userId
+     * @param contactId
+     */
     public Appointment(int id, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) {
         this.id = id;
         this.title = title;
@@ -112,5 +137,9 @@ public class Appointment extends Entity {
 
     public void setContactId(int contactId) {
         this.contactId = contactId;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

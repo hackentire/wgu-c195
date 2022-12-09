@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,27 +16,21 @@ import net.mcentire.model.Country;
 import net.mcentire.model.Customer;
 import net.mcentire.model.Division;
 import net.mcentire.repository.CustomerRepository;
-import javafx.util.Callback;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
-public class MainController extends BaseController {
+public class CustomerController extends BaseController {
 
+    //region FXML declarations
     @FXML
     private Label loggedInAsLabel;
     @FXML
-    private Label appTitleLabel;
-
-    @FXML
-    private SplitPane appointmentSplitPane;
-    @FXML
     private SplitPane customerSplitPane;
-
-    // Customer elements
     @FXML
     private TableColumn customerIdColumn;
     @FXML
@@ -72,6 +67,7 @@ public class MainController extends BaseController {
     private Button deleteCustomerButton;
     @FXML
     private TableView<Customer> customerTable;
+    //endregion
 
     private boolean isModifying = false;
     private Customer selectedCustomer = null;
@@ -82,6 +78,7 @@ public class MainController extends BaseController {
         modifyCustomerButton.setDisable(false);
         addOrModifyCustomerLabel.setText("Add a Customer");
         customerIdField.setText("Auto-generated");
+        clearCustomerForm();
         customerSplitPane.setDividerPositions(.5);
         customerNameField.requestFocus();
     }
@@ -133,7 +130,13 @@ public class MainController extends BaseController {
         if (selectedCustomer == null)
             return;
 
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Please confirm this action.");
+        Optional<ButtonType> result = alert.showAndWait();
 
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            new CustomerRepository().delete(selectedCustomer.getId());
+            AppContext.getData().getCustomers().removeIf(p -> p.getId() == selectedCustomer.getId());
+        }
     }
 
     /**
@@ -157,7 +160,67 @@ public class MainController extends BaseController {
     }
 
     public void onSaveChangesCustomer(ActionEvent actionEvent) {
+        if (!validateCustomerForm())
+            return;
 
+        CustomerRepository repo = new CustomerRepository();
+        boolean successful = false;
+        int index = -1;
+
+        // Build new customer object
+        int id;
+        try {
+            id = Integer.parseInt(customerIdField.getText());
+        } catch (NumberFormatException e) {
+            id = 0;
+        }
+        Customer customer = new Customer(
+                id,
+                customerNameField.getText(),
+                customerAddressField.getText(),
+                customerPostalCodeField.getText(),
+                customerPhoneField.getText(),
+                ((Division) customerDivisionCombo.getValue()).getId()
+        );
+
+        // Create or Update depending on context
+        if (isModifying) {
+            var updated = repo.update(customer);
+            successful = updated;
+            if (updated) {
+                index = AppContext.getData().getCustomers().indexOf(selectedCustomer);
+                AppContext.getData().getCustomers().removeIf(p -> p.getId() == customer.getId());
+            }
+        } else {
+            var resultId = repo.create(customer);
+            successful = resultId > 0;
+            customer.setId(resultId);
+        }
+
+        // Update local state to avoid DB calls
+        if (successful) {
+            if (index > -1) {
+                // Replace existing entry retaining order for display
+                AppContext.getData().getCustomers().add(index, customer);
+            } else {
+                AppContext.getData().getCustomers().add(customer);
+            }
+            customerTable.setItems(AppContext.getData().getCustomers());
+
+            // Optionally refresh from DB instead:
+            //customerTable.setItems(repo.getAll());
+
+            // Reset form
+            onCancelChangesCustomer(actionEvent);
+        }
+    }
+
+    private boolean validateCustomerForm() {
+        if (customerDivisionCombo.getSelectionModel().isEmpty() || customerCountryCombo.getSelectionModel().isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "Missing data in form.").showAndWait();
+            return false;
+        }
+        return true;
     }
 
     public void onCancelChangesCustomer(ActionEvent actionEvent) {
@@ -175,21 +238,8 @@ public class MainController extends BaseController {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loggedInAsLabel.setText("Logged in as [" + AppContext.getActiveUser().getName() + "]");
-
-        appointmentSplitPane.setDividerPositions(1);
         customerSplitPane.setDividerPositions(1);
-
         BindCustomerElements();
-        //BindAppointmentElements();
-
-        checkUserAppointments();
-    }
-
-    private void checkUserAppointments() {
-        LocalDateTime timeNow = LocalDateTime.now();
-        LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
-
-
     }
 
     private void BindCustomerElements() {
@@ -199,7 +249,7 @@ public class MainController extends BaseController {
         ObservableList<Division> divisions = AppContext.getData().getDivisions();
         ObservableList<Country> countries = AppContext.getData().getCountries();
 
-        // ComboBox setup
+        //region ComboBox setup
         customerCountryCombo.setItems(countries);
         customerDivisionCombo.setItems(FXCollections.observableArrayList());
         customerCountryCombo.setConverter(new StringConverter<Country>() {
@@ -226,9 +276,9 @@ public class MainController extends BaseController {
                 return null;
             }
         });
+        //endregion
 
-        // Table setup
-        customerTable.setItems(customers);
+        //region Table setup
         // Bind table
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -258,6 +308,8 @@ public class MainController extends BaseController {
             return cellValue;
         });
 
+        customerTable.setItems(customers);
+
         // Add a listener to the table to handle selection changes (to enable/disable modify&delete buttons)
         customerTable.getSelectionModel().selectedItemProperty().addListener((value, oldSelection, newSelection) -> {
             boolean hasSelection = (newSelection != null);
@@ -279,6 +331,8 @@ public class MainController extends BaseController {
 //                }
 //            }
 //        });
+
+        //endregion
     }
 
     public void onLogOut(ActionEvent actionEvent) {
@@ -290,21 +344,11 @@ public class MainController extends BaseController {
         Platform.exit();
     }
 
-    public void onAppointmentRadioChange(ActionEvent actionEvent) {
+    public void navigateAppointments(ActionEvent actionEvent) {
+        new SceneLoader(actionEvent).ChangeToAppointmentScene();
     }
 
-    public void onAddAppointment(ActionEvent actionEvent) {
-    }
-
-    public void onEditAppointment(ActionEvent actionEvent) {
-    }
-
-    public void onCancelAppointment(ActionEvent actionEvent) {
-    }
-
-    public void onSaveChangesAppointment(ActionEvent actionEvent) {
-    }
-
-    public void onCancelChangesAppointment(ActionEvent actionEvent) {
+    public void navigateReports(ActionEvent actionEvent) {
+        new SceneLoader(actionEvent).ChangeToReportScene();
     }
 }

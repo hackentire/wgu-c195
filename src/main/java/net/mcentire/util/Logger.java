@@ -10,10 +10,10 @@ public class Logger {
     /**
      * Appends/creates a log entry for a login event at the predefined path.
      * @param username the username attempted
-     * @param authenticated whether the event was sucessful or not
+     * @param authenticated whether the event was successful or not
      */
     public static void log (String username, boolean authenticated) {
-        String message = Time.getCurrentUtcTime()
+        String message = Time.getCurrentUtcTime().toString()
             + " UTC | Username: "
             + username + " | Result: "
             + (authenticated ? "Success" : "Failure") + System.lineSeparator();

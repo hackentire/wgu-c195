@@ -5,17 +5,23 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import net.mcentire.app.AppContext;
 import net.mcentire.model.User;
 import net.mcentire.repository.*;
 import net.mcentire.util.Logger;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class LoginViewController extends BaseController {
+
+    @FXML
+    private Label zoneLabel;
     @FXML
     private ToggleButton toggleButton;
     @FXML
@@ -57,15 +63,26 @@ public class LoginViewController extends BaseController {
         AppContext.setActiveUser(authenticatedUser);
 
         // Fetch initial data for forms
-        AppContext.getData().setCustomers(new CustomerRepository().getAll());
-        AppContext.getData().setAppointments(new AppointmentRepository().getAll());
-        AppContext.getData().setCountries(new CountryRepository().getAll());
-        AppContext.getData().setDivisions(new DivisionRepository().getAll());
-        AppContext.getData().setContacts(new ContactRepository().getAll());
+        var contextData = AppContext.getData();
+        contextData.setCustomers(new CustomerRepository().getAll());
+        contextData.setAppointments(new AppointmentRepository().getAll());
+        contextData.setCountries(new CountryRepository().getAll());
+        contextData.setDivisions(new DivisionRepository().getAll());
+        contextData.setContacts(new ContactRepository().getAll());
+        contextData.setUsers(new UserRepository().getAll());
 
-        new SceneLoader(actionEvent).ChangeToMainScene();
+        new SceneLoader(actionEvent).ChangeToCustomerScene();
 
         // Check if any relevant meetings are occurring soon
+        checkUserAppointments();
+    }
+
+    private void checkUserAppointments() {
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
+
+        //TODO: checkUserAppointments
+
     }
 
     /**
@@ -92,7 +109,8 @@ public class LoginViewController extends BaseController {
         URL imagePath = getClass().getResource("/net/mcentire/view/" + resourceBundle.getString("splashSrc"));
         assert imagePath != null;
         loginSplash.setImage(new Image(imagePath.toString()));
-        localeLabel.setText("Locale: " + resourceBundle.getString("locale"));
+        localeLabel.setText("Locale: " + Locale.getDefault());
+        zoneLabel.setText("Zone: " + ZoneId.systemDefault());
         loginLabel.setText(resourceBundle.getString("logIn"));
         userField.setPromptText(resourceBundle.getString("username"));
         passwordField.setPromptText(resourceBundle.getString("password"));
@@ -117,5 +135,16 @@ public class LoginViewController extends BaseController {
         );
         resourceBundle = AppContext.getResourceBundle();
         UpdateLocalization(actionEvent);
+    }
+
+    /**
+     * Allow form submission with the Enter key
+     * @param keyEvent
+     */
+    public void onPasswordKeySubmit(KeyEvent keyEvent) {
+        if (keyEvent.getCharacter().equals("\r") )
+        {
+            onSubmitAction(new ActionEvent(passwordField, null));
+        }
     }
 }

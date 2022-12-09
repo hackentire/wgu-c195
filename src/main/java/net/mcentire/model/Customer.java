@@ -1,6 +1,6 @@
 package net.mcentire.model;
 
-public class Customer extends Entity {
+public class Customer extends Entity implements Named {
     private String name;
     private String address;
     private String postalCode;
@@ -22,6 +22,14 @@ public class Customer extends Entity {
         this.postalCode = postalCode;
         this.phoneNumber = phoneNumber;
         this.divisionId = divisionId;
+    }
+
+    /**
+     *
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 
 

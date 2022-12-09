@@ -1,6 +1,6 @@
 package net.mcentire.model;
 
-public class User extends Entity {
+public class User extends Entity implements Named {
     private String name;
     private String password;
 
