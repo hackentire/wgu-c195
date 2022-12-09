@@ -72,6 +72,11 @@ public abstract class BaseController implements Initializable {
             }
         }
 
+        /**
+         * Change to a given scene
+         * @param fxml
+         * @param title
+         */
         private void ChangeScene(String fxml, String title) {
             ChangeScene(fxml, title, defaultWidth, defaultHeight);
         }
@@ -83,10 +88,16 @@ public abstract class BaseController implements Initializable {
             ChangeScene("customer-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
         }
 
+        /**
+         * Changes the JavaFX scene to the Appointment scene
+         */
         void ChangeToAppointmentScene() {
             ChangeScene("appointment-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
         }
 
+        /**
+         * Changes the JavaFX scene to the Report scene
+         */
         void ChangeToReportScene() {
             ChangeScene("report-view.fxml", resourceBundle.getString("scheduler") + " 1.0");
         }

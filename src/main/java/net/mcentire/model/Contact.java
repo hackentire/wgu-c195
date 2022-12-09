@@ -1,9 +1,20 @@
 package net.mcentire.model;
 
+/**
+ * The type Contact.
+ */
 public class Contact extends Entity implements Named {
+
     private String name;
     private String email;
 
+    /**
+     * Instantiates a new Contact.
+     *
+     * @param id    the id
+     * @param name  the name
+     * @param email the email
+     */
     public Contact(int id, String name, String email) {
         this.id = id;
         this.name = name;
@@ -26,6 +37,8 @@ public class Contact extends Entity implements Named {
     }
 
     /**
+     * Sets name.
+     *
      * @param name the new contact name
      */
     public void setName(String name) {
@@ -33,6 +46,8 @@ public class Contact extends Entity implements Named {
     }
 
     /**
+     * Gets email.
+     *
      * @return the contact email
      */
     public String getEmail() {
@@ -40,6 +55,8 @@ public class Contact extends Entity implements Named {
     }
 
     /**
+     * Sets email.
+     *
      * @param email the new email
      */
     public void setEmail(String email) {

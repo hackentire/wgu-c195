@@ -9,10 +9,22 @@ import net.mcentire.util.Time;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The type Appointment repository.
+ */
 public class AppointmentRepository extends EntityRepository<Appointment> {
 
+    /**
+     * The constant tableName.
+     */
     private static final String tableName = "appointments";
+    /**
+     * The constant tableIdentifier.
+     */
     private static final String tableIdentifier = "Appointment_ID";
+    /**
+     * Fields to be set on creation
+     */
     private static final String[] entityCreatorFields = {
             "Title",
             "Description",
@@ -24,6 +36,9 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
             "User_ID",
             "Contact_ID"
     };
+    /**
+     * Fields to be set on update
+     */
     private static final String[] entityUpdaterFields = {
             "Title",
             "Description",
@@ -56,6 +71,11 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
         return entityUpdaterFields;
     }
 
+    /**
+     * Provides a method to create an Appointment from a result set
+     * @param rs the ResultSet from the query
+     * @return
+     */
     @Override
     Appointment createEntityFromResultSet(ResultSet rs) {
         try {
@@ -78,6 +98,11 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
         return null;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityCreatorQueryParams(Appointment entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -94,6 +119,11 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
         return params;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityUpdaterQueryParams(Appointment entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -110,6 +140,12 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
         return params;
     }
 
+    /**
+     * Get a list of appointments related to a given Customer ID
+     *
+     * @param id the customer id
+     * @return customer appointments
+     */
     public ObservableList<Appointment> getCustomerAppointments(int id) {
         ObservableList<Appointment> results = FXCollections.observableArrayList();
 

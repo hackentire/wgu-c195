@@ -5,6 +5,9 @@ import java.nio.file.*;
 import java.time.LocalDateTime;
 
 public class Logger {
+    /**
+     * Path and filename of the log file to generate
+     */
     private static final Path path = Paths.get("login_activity.txt");
 
     /**

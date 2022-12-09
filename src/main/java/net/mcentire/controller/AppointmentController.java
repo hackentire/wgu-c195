@@ -107,6 +107,9 @@ public class AppointmentController extends BaseController {
         PopulateTimeOptions();
     }
 
+    /**
+     * Populates start and end time combo box options
+     */
     private void PopulateTimeOptions() {
         ObservableList<String> time = FXCollections.observableArrayList();
 
@@ -126,6 +129,9 @@ public class AppointmentController extends BaseController {
         appointmentEndTime.setItems(time);
     }
 
+    /**
+     * Bind UI elements for the Appointment type
+     */
     private void BindAppointmentElements() {
         AppointmentRepository repo = new AppointmentRepository();
 
@@ -235,15 +241,30 @@ public class AppointmentController extends BaseController {
         //endregion
     }
 
+    /**
+     * Handle log out.
+     *
+     * @param actionEvent the action event
+     */
     public void onLogOut(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToLoginScene();
         AppContext.setActiveUser(null);
     }
 
+    /**
+     * Handle exit.
+     *
+     * @param actionEvent the action event
+     */
     public void onExit(ActionEvent actionEvent) {
         Platform.exit();
     }
 
+    /**
+     * Handle Appointment Radio filter change
+     *
+     * @param actionEvent the action event
+     */
     public void onAppointmentRadioChange(ActionEvent actionEvent) {
         Toggle selectedToggle = appointmentViewRadioGroup.getSelectedToggle();
         if (selectedToggle.equals(appointmentAllRadio)) {
@@ -265,6 +286,11 @@ public class AppointmentController extends BaseController {
         }
     }
 
+    /**
+     * Handle Add Appointment option
+     *
+     * @param actionEvent the action event
+     */
     public void onAddAppointment(ActionEvent actionEvent) {
         isModifying = false;
         addAppointmentButton.setDisable(true);
@@ -276,6 +302,9 @@ public class AppointmentController extends BaseController {
         appointmentTitleField.requestFocus();
     }
 
+    /**
+     * Clear the add/modify form
+     */
     private void clearAppointmentForm() {
         UiUtil.clear(appointmentTitleField, appointmentDescriptionField, appointmentTypeField, appointmentLocationField);
         UiUtil.clear(appointmentContactCombo, appointmentCustomerCombo, appointmentUserCombo, appointmentStartTime, appointmentEndTime);
@@ -284,6 +313,11 @@ public class AppointmentController extends BaseController {
         appointmentEndDate.setValue(LocalDateTime.now().toLocalDate());
     }
 
+    /**
+     * Handle edit appointment.
+     *
+     * @param actionEvent the action event
+     */
     public void onEditAppointment(ActionEvent actionEvent) {
         if (selectedAppointment == null)
             return;
@@ -325,6 +359,11 @@ public class AppointmentController extends BaseController {
         appointmentTitleField.requestFocus();
     }
 
+    /**
+     * Handle appointment removal.
+     *
+     * @param actionEvent the action event
+     */
     public void onRemoveAppointment(ActionEvent actionEvent) {
         if (selectedAppointment == null)
             return;
@@ -344,6 +383,11 @@ public class AppointmentController extends BaseController {
         }
     }
 
+    /**
+     * Handle saving/persisting the form
+     *
+     * @param actionEvent the action event
+     */
     public void onSaveChangesAppointment(ActionEvent actionEvent) {
         if (!validateAppointmentForm())
             return;
@@ -353,7 +397,6 @@ public class AppointmentController extends BaseController {
         boolean successful = false;
         int index = -1;
 
-        // Build a new customer object
         int id;
         try {
             id = Integer.parseInt(appointmentIdField.getText());
@@ -368,6 +411,7 @@ public class AppointmentController extends BaseController {
 
         Customer tentativeCustomer = (Customer) appointmentCustomerCombo.getSelectionModel().getSelectedItem();
 
+        // Validation checks
         if (!hasNoInvalidDurations(startTime, endTime))
             return;
         if (!hasNoEndAfterStart(startTime, endTime))
@@ -377,6 +421,7 @@ public class AppointmentController extends BaseController {
         if (!hasNoConflictingAppointments(tentativeCustomer, startTime, endTime))
             return;
 
+        // Build a new customer object
         Appointment appointment = new Appointment(
                 id,
                 appointmentTitleField.getText(),
@@ -480,11 +525,14 @@ public class AppointmentController extends BaseController {
              *  Start in window, end after window,
              *  Start after window, end inside
              *  Start before window and end after window
+             *  Start same as window start and end same as window end
              */
             if ((newStartUtc.isAfter(startUtc) && newEndUtc.isBefore(endUtc)) ||
                     (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(startUtc)) ||
                     (newStartUtc.isAfter(startUtc) && newStartUtc.isBefore(endUtc) && newEndUtc.isAfter(endUtc)) ||
-                    (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(endUtc)))
+                    (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(endUtc)) ||
+                    (newStartUtc.equals(startUtc) && newEndUtc.equals(endUtc))
+            )
             {
                 new Alert(Alert.AlertType.ERROR, "This customer has appointments that conflict with this schedule", null).showAndWait();
                 return false;
@@ -528,6 +576,11 @@ public class AppointmentController extends BaseController {
         return true;
     }
 
+    /**
+     * Handle cancelling the modify/create form.
+     *
+     * @param actionEvent the action event
+     */
     public void onCancelChangesAppointment(ActionEvent actionEvent) {
         clearAppointmentForm();
         selectedAppointment = null;
@@ -537,10 +590,20 @@ public class AppointmentController extends BaseController {
         editAppointmentButton.setDisable(true);
     }
 
+    /**
+     * Navigate to the customers scene.
+     *
+     * @param actionEvent the action event
+     */
     public void navigateCustomers(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToCustomerScene();
     }
 
+    /**
+     * Navigate to the reports scene.
+     *
+     * @param actionEvent the action event
+     */
     public void navigateReports(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToReportScene();
     }

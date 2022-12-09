@@ -9,6 +9,9 @@ public class CustomerRepository extends EntityRepository<Customer> {
 
     private static final String tableName = "customers";
     private static final String tableIdentifier = "Customer_ID";
+    /**
+     * Fields to be set on creation
+     */
     private static final String[] entityCreatorFields = {
             "Customer_Name",
             "Address",
@@ -16,6 +19,9 @@ public class CustomerRepository extends EntityRepository<Customer> {
             "Phone",
             "Division_ID"
     };
+    /**
+     * Fields to be set on update
+     */
     private static final String[] entityUpdaterFields = {
             "Customer_Name",
             "Address",
@@ -44,6 +50,11 @@ public class CustomerRepository extends EntityRepository<Customer> {
         return entityUpdaterFields;
     }
 
+    /**
+     * Provides a method to create a Customer from a result set
+     * @param rs the ResultSet from the query
+     * @return
+     */
     @Override
     Customer createEntityFromResultSet(ResultSet rs) {
         try {
@@ -63,6 +74,11 @@ public class CustomerRepository extends EntityRepository<Customer> {
         return null;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityCreatorQueryParams(Customer entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -75,6 +91,11 @@ public class CustomerRepository extends EntityRepository<Customer> {
         return params;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityUpdaterQueryParams(Customer entity) {
         QueryParameter[] params = new QueryParameter[]{

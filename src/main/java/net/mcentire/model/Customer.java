@@ -1,12 +1,25 @@
 package net.mcentire.model;
 
+/**
+ * The type Customer.
+ */
 public class Customer extends Entity implements Named {
+
     private String name;
     private String address;
     private String postalCode;
     private String phoneNumber;
     private int divisionId;
 
+    /**
+     * Instantiates a new Customer.
+     *
+     * @param name        the name
+     * @param address     the address
+     * @param postalCode  the postal code
+     * @param phoneNumber the phone number
+     * @param divisionId  the division id
+     */
     public Customer(String name, String address, String postalCode, String phoneNumber, int divisionId) {
         this.name = name;
         this.address = address;
@@ -15,6 +28,16 @@ public class Customer extends Entity implements Named {
         this.divisionId = divisionId;
     }
 
+    /**
+     * Instantiates a new Customer.
+     *
+     * @param id          the id
+     * @param name        the name
+     * @param address     the address
+     * @param postalCode  the postal code
+     * @param phoneNumber the phone number
+     * @param divisionId  the division id
+     */
     public Customer(int id, String name, String address, String postalCode, String phoneNumber, int divisionId) {
         this.id = id;
         this.name = name;
@@ -25,6 +48,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets id.
      *
      * @param id the id to set
      */
@@ -42,6 +66,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets name.
      *
      * @param name the new Customer name
      */
@@ -50,6 +75,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Gets address.
      *
      * @return the Customer address
      */
@@ -58,6 +84,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets address.
      *
      * @param address the new Customer address
      */
@@ -66,6 +93,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Gets postal code.
      *
      * @return the Customer postal code
      */
@@ -74,6 +102,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets postal code.
      *
      * @param postalCode the new Customer postal code
      */
@@ -82,6 +111,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Gets phone number.
      *
      * @return the Customer phone number
      */
@@ -90,6 +120,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets phone number.
      *
      * @param phoneNumber the new Customer phone number
      */
@@ -98,6 +129,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Gets division id.
      *
      * @return the id of the Division the Customer is associated with
      */
@@ -106,6 +138,7 @@ public class Customer extends Entity implements Named {
     }
 
     /**
+     * Sets division id.
      *
      * @param divisionId the id of the new Division the Customer is associated with
      */

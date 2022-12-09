@@ -51,6 +51,11 @@ public class Time {
                 .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
 
+    /**
+     * Converts a local time to ET (EST/EDT)
+     * @param localDateTime
+     * @return
+     */
     public static LocalDateTime toEstLocalDateTime(LocalDateTime localDateTime) {
         return localDateTime.atZone(Clock.systemDefaultZone().getZone())
                 .withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();

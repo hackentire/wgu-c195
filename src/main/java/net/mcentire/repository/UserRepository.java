@@ -11,10 +11,16 @@ public class UserRepository extends EntityRepository<User> {
 
     private static final String tableName = "users";
     private static final String tableIdentifier = "User_ID";
+    /**
+     * Fields to be set on creation
+     */
     private static final String[] entityCreatorFields = {
             "User_Name",
             "Password"
     };
+    /**
+     * Fields to be set on update
+     */
     private static final String[] entityUpdaterFields = {
             "User_Name",
             "Password"
@@ -40,6 +46,11 @@ public class UserRepository extends EntityRepository<User> {
         return entityUpdaterFields;
     }
 
+    /**
+     * Provides a method to create a User from a result set
+     * @param rs the ResultSet from the query
+     * @return
+     */
     @Override
     User createEntityFromResultSet(ResultSet rs) {
         try {
@@ -55,6 +66,11 @@ public class UserRepository extends EntityRepository<User> {
         return null;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityCreatorQueryParams(User entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -64,6 +80,11 @@ public class UserRepository extends EntityRepository<User> {
         return params;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityUpdaterQueryParams(User entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -98,6 +119,10 @@ public class UserRepository extends EntityRepository<User> {
         return null;
     }
 
+    /**
+     * Overrides the parent method to conceal the user password
+     * @return a list of Users with truncated passwords
+     */
     @Override
     public ObservableList<User> getAll() {
         try {

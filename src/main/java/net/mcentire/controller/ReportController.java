@@ -93,6 +93,8 @@ public class ReportController extends BaseController {
             }
         };
 
+        // LAMBDA_USAGE:
+        //  Anonymous function used to iterate over a map and build the report
         appointments.stream()
                 .collect(Collectors.groupingBy(p -> p.getStart().getMonth()))
                 .entrySet()

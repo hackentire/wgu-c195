@@ -72,6 +72,10 @@ public class CustomerController extends BaseController {
     private boolean isModifying = false;
     private Customer selectedCustomer = null;
 
+    /**
+     * Handle the add button click
+     * @param actionEvent
+     */
     public void onAddCustomer(ActionEvent actionEvent) {
         isModifying = false;
         addCustomerButton.setDisable(true);
@@ -83,6 +87,10 @@ public class CustomerController extends BaseController {
         customerNameField.requestFocus();
     }
 
+    /**
+     * Handle the modify button click
+     * @param actionEvent
+     */
     public void onModifyCustomer(ActionEvent actionEvent) {
         if (selectedCustomer == null)
             return;
@@ -94,6 +102,7 @@ public class CustomerController extends BaseController {
         customerIdField.setText("");
         customerSplitPane.setDividerPositions(.5);
 
+        // Populate fields
         customerIdField.setText(String.valueOf(selectedCustomer.getId()));
         customerNameField.setText(selectedCustomer.getName());
         customerAddressField.setText(selectedCustomer.getAddress());
@@ -126,6 +135,10 @@ public class CustomerController extends BaseController {
         customerNameField.requestFocus();
     }
 
+    /**
+     * Handle the delete button click
+     * @param actionEvent
+     */
     public void onDeleteCustomer(ActionEvent actionEvent) {
         if (selectedCustomer == null)
             return;
@@ -159,6 +172,10 @@ public class CustomerController extends BaseController {
         }
     }
 
+    /**
+     * Handle validating/saving/persisting appointment form changes
+     * @param actionEvent
+     */
     public void onSaveChangesCustomer(ActionEvent actionEvent) {
         if (!validateCustomerForm())
             return;
@@ -215,6 +232,10 @@ public class CustomerController extends BaseController {
         }
     }
 
+    /**
+     * Validate for missing data
+     * @return
+     */
     private boolean validateCustomerForm() {
         if (customerDivisionCombo.getSelectionModel().isEmpty() || customerCountryCombo.getSelectionModel().isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Missing data in form.").showAndWait();
@@ -223,6 +244,10 @@ public class CustomerController extends BaseController {
         return true;
     }
 
+    /**
+     * Handle add/modify form cancellation
+     * @param actionEvent
+     */
     public void onCancelChangesCustomer(ActionEvent actionEvent) {
         clearCustomerForm();
         customerSplitPane.setDividerPositions(1);
@@ -230,6 +255,9 @@ public class CustomerController extends BaseController {
         modifyCustomerButton.setDisable(false);
     }
 
+    /**
+     * Clear form
+     */
     private void clearCustomerForm() {
         UiUtil.clear(customerNameField, customerAddressField, customerPhoneField, customerPostalCodeField);
         UiUtil.clear(customerCountryCombo, customerDivisionCombo);
@@ -242,6 +270,9 @@ public class CustomerController extends BaseController {
         BindCustomerElements();
     }
 
+    /**
+     * Bind UI elements for the Customer type
+     */
     private void BindCustomerElements() {
         CustomerRepository repo = new CustomerRepository();
 
@@ -252,6 +283,8 @@ public class CustomerController extends BaseController {
         //region ComboBox setup
         customerCountryCombo.setItems(countries);
         customerDivisionCombo.setItems(FXCollections.observableArrayList());
+
+        // Display Country name in combobox
         customerCountryCombo.setConverter(new StringConverter<Country>() {
             @Override
             public String toString(Country c) {
@@ -264,6 +297,7 @@ public class CustomerController extends BaseController {
                 return null;
             }
         });
+        // Display division name in combobox
         customerDivisionCombo.setConverter(new StringConverter<Division>() {
             @Override
             public String toString(Division d) {
@@ -335,19 +369,34 @@ public class CustomerController extends BaseController {
         //endregion
     }
 
+    /**
+     * Handle log out
+     */
     public void onLogOut(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToLoginScene();
         AppContext.setActiveUser(null);
     }
 
+    /**
+     * Handle exitting
+     * @param actionEvent
+     */
     public void onExit(ActionEvent actionEvent) {
         Platform.exit();
     }
 
+    /**
+     * Navigate to appointments scene
+     * @param actionEvent
+     */
     public void navigateAppointments(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToAppointmentScene();
     }
 
+    /**
+     * Navigate to reports scene
+     * @param actionEvent
+     */
     public void navigateReports(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToReportScene();
     }

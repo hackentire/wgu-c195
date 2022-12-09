@@ -9,10 +9,16 @@ import java.sql.SQLException;
 public class DivisionRepository extends EntityRepository<Division> {
     private static final String tableName = "first_level_divisions";
     private static final String tableIdentifier = "Division_ID";
+    /**
+     * Fields to be set on creation
+     */
     private static final String[] entityCreatorFields = {
             "Division",
             "Country_ID"
     };
+    /**
+     * Fields to be set on update
+     */
     private static final String[] entityUpdaterFields = {
             "Division",
             "Country_ID"
@@ -38,6 +44,11 @@ public class DivisionRepository extends EntityRepository<Division> {
         return entityUpdaterFields;
     }
 
+    /**
+     * Provides a method to create a Division from a result set
+     * @param rs the ResultSet from the query
+     * @return
+     */
     @Override
     Division createEntityFromResultSet(ResultSet rs) {
         try {
@@ -53,6 +64,11 @@ public class DivisionRepository extends EntityRepository<Division> {
         return null;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityCreatorQueryParams(Division entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -62,6 +78,11 @@ public class DivisionRepository extends EntityRepository<Division> {
         return params;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityUpdaterQueryParams(Division entity) {
         QueryParameter[] params = new QueryParameter[]{

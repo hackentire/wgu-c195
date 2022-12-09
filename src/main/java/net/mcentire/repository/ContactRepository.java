@@ -11,10 +11,16 @@ import java.sql.SQLException;
 public class ContactRepository extends EntityRepository<Contact> {
     private static final String tableName = "contacts";
     private static final String tableIdentifier = "Contact_ID";
+    /**
+     * Fields to be set on creation
+     */
     private static final String[] entityCreatorFields = {
             "Contact_Name",
             "Email"
     };
+    /**
+     * Fields to be set on update
+     */
     private static final String[] entityUpdaterFields = {
             "Contact_Name",
             "Email"
@@ -40,6 +46,11 @@ public class ContactRepository extends EntityRepository<Contact> {
         return entityUpdaterFields;
     }
 
+    /**
+     * Provides a method to create a Contact from a result set
+     * @param rs the ResultSet from the query
+     * @return
+     */
     @Override
     Contact createEntityFromResultSet(ResultSet rs) {
         try {
@@ -55,6 +66,11 @@ public class ContactRepository extends EntityRepository<Contact> {
         return null;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityCreatorQueryParams(Contact entity) {
         QueryParameter[] params = new QueryParameter[]{
@@ -64,6 +80,11 @@ public class ContactRepository extends EntityRepository<Contact> {
         return params;
     }
 
+    /**
+     * Sets up which type of parameter to insert into the prepared statement
+     * @param entity
+     * @return
+     */
     @Override
     QueryParameter[] getEntityUpdaterQueryParams(Contact entity) {
         QueryParameter[] params = new QueryParameter[]{
