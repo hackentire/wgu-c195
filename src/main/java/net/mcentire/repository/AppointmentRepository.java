@@ -85,8 +85,8 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                 new QueryParameter(entity.getDescription()),
                 new QueryParameter(entity.getLocation()),
                 new QueryParameter(entity.getType()),
-                new QueryParameter(Time.toUtcTimestamp(entity.getStart())),
-                new QueryParameter(Time.toUtcTimestamp(entity.getEnd())),
+                new QueryParameter(Time.toTimestamp(entity.getStart())),
+                new QueryParameter(Time.toTimestamp(entity.getEnd())),
                 new QueryParameter(entity.getCustomerId()),
                 new QueryParameter(entity.getUserId()),
                 new QueryParameter(entity.getContactId())
@@ -101,8 +101,8 @@ public class AppointmentRepository extends EntityRepository<Appointment> {
                 new QueryParameter(entity.getDescription()),
                 new QueryParameter(entity.getLocation()),
                 new QueryParameter(entity.getType()),
-                new QueryParameter(Time.toUtcTimestamp(entity.getStart())),
-                new QueryParameter(Time.toUtcTimestamp(entity.getEnd())),
+                new QueryParameter(Time.toTimestamp(entity.getStart())),
+                new QueryParameter(Time.toTimestamp(entity.getEnd())),
                 new QueryParameter(entity.getCustomerId()),
                 new QueryParameter(entity.getUserId()),
                 new QueryParameter(entity.getContactId())

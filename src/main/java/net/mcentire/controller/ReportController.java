@@ -11,15 +11,20 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import net.mcentire.app.AppContext;
-import net.mcentire.model.Country;
-import net.mcentire.model.Customer;
-import net.mcentire.model.Division;
+import net.mcentire.model.*;
+import net.mcentire.repository.AppointmentRepository;
+import net.mcentire.repository.ContactRepository;
 import net.mcentire.repository.CustomerRepository;
+import net.mcentire.util.Time;
 
 import java.net.URL;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
+import java.time.Duration;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ReportController extends BaseController {
@@ -34,7 +39,7 @@ public class ReportController extends BaseController {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loggedInAsLabel.setText("Logged in as [" + AppContext.getActiveUser().getName() + "]");
+//        loggedInAsLabel.setText("Logged in as [" + AppContext.getActiveUser().getName() + "]");
     }
 
     public void onLogOut(ActionEvent actionEvent) {
@@ -59,6 +64,53 @@ public class ReportController extends BaseController {
      * @param actionEvent
      */
     public void loadReport1(ActionEvent actionEvent) {
+        /*
+        January:
+            TypeA: 1
+            TypeB: 4
+        February:
+            TypeA: 2
+        ...
+         */
+        var appointments = new AppointmentRepository().getAll();
+        var stringBuilder = new StringBuilder();
+
+        stringBuilder.append(
+                  "[REPORT]:\n The number of appointments of each type occurring in each month, sorted by month.\n\n".toUpperCase()
+        );
+
+        // FUNCTIONAL_INTERFACE: set up a custom Comparator to sort the months in this Map
+        var monthComparator = new Comparator<Map.Entry<Month, List<Appointment>>>() {
+            @Override
+            public int compare(Map.Entry<Month, List<Appointment>> o1, Map.Entry<Month, List<Appointment>> o2) {
+                if (o1.getKey().ordinal() < o2.getKey().ordinal()) {
+                    return -1;
+                }
+                if (o1.getKey().ordinal() > o2.getKey().ordinal()) {
+                    return 1;
+                }
+                return 0;
+            }
+        };
+
+        appointments.stream()
+                .collect(Collectors.groupingBy(p -> p.getStart().getMonth()))
+                .entrySet()
+                .stream()
+                .sorted(monthComparator)
+                .forEach(p -> {
+                    stringBuilder.append(p.getKey().toString() + ":\n"); // Month
+                    var typeMap = p.getValue()
+                            .stream()
+                            .collect(Collectors.groupingBy(g -> g.getType()));
+                    for (var thing : typeMap.entrySet()) {
+                        stringBuilder.append(" └─ " + thing.getKey() + ": " + thing.getValue().size() + "\n");
+                    }
+                    stringBuilder.append("\n");
+                });
+
+        stringBuilder.append("\nGENERATED: " + Time.getCurrentUtcTime().format(DateTimeFormatter.ISO_DATE_TIME) + " UTC");
+        dataField.setText(stringBuilder.toString());
     }
 
     /**
@@ -66,6 +118,45 @@ public class ReportController extends BaseController {
      * @param actionEvent
      */
     public void loadReport2(ActionEvent actionEvent) {
+
+        var contacts = new ContactRepository().getAll();
+        var appointments = new AppointmentRepository().getAll().stream().sorted((o1, o2) -> {
+            if (o1.getStart().isBefore(o2.getStart())) {
+                return -1;
+            }
+            if (o1.getStart().isAfter(o2.getStart())) {
+                return 1;
+            }
+            return 0;
+        }).toList();
+
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(
+                ("[REPORT]:\n Details of appointments associated with each contact in chronological order. " +
+                        "Dates and times displayed in Local Time: " + ZoneId.systemDefault() + "\n\n").toUpperCase()
+        );
+
+        var formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm");
+
+        for (Contact contact : contacts) {
+            stringBuilder.append("ID: " + contact.getId() + " - " + contact.getName() + ":\n");
+            for (Appointment appointment : appointments) {
+                if (appointment.getContactId() == contact.getId()) {
+                    stringBuilder.append(
+                            "   APPOINTMENT ID: " + appointment.getId() +
+                                    " | Title: " + appointment.getTitle() +
+                                    " | Type: " + appointment.getType() +
+                                    " | CustomerID: " + appointment.getCustomerId() + "\n" +
+                            "   FROM: [" + appointment.getStart().format(formatter) + "] TO: [" + appointment.getEnd().format(formatter) + "]\n" +
+                            "   DESCRIPTION: " + appointment.getDescription() + "\n\n"
+                    );
+                }
+            }
+            stringBuilder.append("\n");
+        }
+
+        stringBuilder.append("GENERATED: " + Time.getCurrentUtcTime().format(DateTimeFormatter.ISO_DATE_TIME) + " UTC");
+        dataField.setText(stringBuilder.toString());
     }
 
     /**
@@ -73,5 +164,47 @@ public class ReportController extends BaseController {
      * @param actionEvent
      */
     public void loadReport3(ActionEvent actionEvent) {
+        var appointments = new AppointmentRepository().getAll();
+        var customers = new CustomerRepository().getAll();
+
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(
+                "[REPORT]:\n The total number of hours scheduled for each Customer.\n\n".toUpperCase()
+        );
+
+        for (Customer customer : customers) {
+            stringBuilder.append("ID: " + customer.getId() + " - " + customer.getName() + ":\n");
+            Duration total = Duration.ZERO;
+            int count = 0;
+            for (Appointment appointment : appointments) {
+                if (appointment.getCustomerId() == customer.getId()) {
+                    total = total.plus(Duration.between(appointment.getStart(), appointment.getEnd()));
+                    ++count;
+                }
+            }
+            Duration average = Duration.ZERO;
+            if (count > 0) {
+                average = total.dividedBy(count);
+            }
+            stringBuilder.append("  TOTAL SCHEDULED TIME: " + formatDuration(total) + "\n" +
+                    "  TOTAL COUNT: " + count + "\n" +
+                    "  AVERAGE APPOINTMENT DURATION: " + formatDuration(average) + "\n\n");
+        }
+
+
+        stringBuilder.append("\nGENERATED: " + Time.getCurrentUtcTime().format(DateTimeFormatter.ISO_DATE_TIME) + " UTC");
+        dataField.setText(stringBuilder.toString());
+    }
+
+    // https://stackoverflow.com/questions/266825/how-to-format-a-duration-in-java-e-g-format-hmmss
+    private static String formatDuration(Duration duration) {
+        long seconds = duration.getSeconds();
+        long absSeconds = Math.abs(seconds);
+        String positive = String.format(
+                "%d:%02d:%02d",
+                absSeconds / 3600,
+                (absSeconds % 3600) / 60,
+                absSeconds % 60);
+        return seconds < 0 ? "-" + positive : positive;
     }
 }

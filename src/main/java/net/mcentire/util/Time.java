@@ -34,6 +34,15 @@ public class Time {
 
     /**
      *
+     * @param localDateTime the local time to convert into a timestamp
+     * @return a timestamp representation of the datetime
+     */
+    public static Timestamp toTimestamp(LocalDateTime localDateTime) {
+        return Timestamp.valueOf(localDateTime);
+    }
+
+    /**
+     *
      * @param localDateTime the local time to convert into a UTC timestamp
      * @return a UTC LocalDateTime representation of the datetime
      */
