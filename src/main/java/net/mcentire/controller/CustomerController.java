@@ -143,6 +143,9 @@ public class CustomerController extends BaseController {
         if (selectedCustomer == null)
             return;
 
+        if (!hasNoDependentAppointments(selectedCustomer))
+            return;
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Please confirm this action.");
         Optional<ButtonType> result = alert.showAndWait();
 
@@ -150,6 +153,21 @@ public class CustomerController extends BaseController {
             new CustomerRepository().delete(selectedCustomer.getId());
             AppContext.getData().getCustomers().removeIf(p -> p.getId() == selectedCustomer.getId());
         }
+    }
+
+    private boolean hasNoDependentAppointments(Customer customer) {
+        var appointments = AppContext.getData().getAppointments().stream()
+                .filter(p -> p.getCustomerId() == customer.getId())
+                .toList();
+
+        if (appointments.size() > 0)
+        {
+            new Alert(Alert.AlertType.ERROR,
+                    "This customer is assigned to an existing appointment and cannot be deleted.").showAndWait();
+            return false;
+        }
+
+        return true;
     }
 
     /**

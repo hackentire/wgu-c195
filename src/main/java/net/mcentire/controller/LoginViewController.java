@@ -7,13 +7,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import net.mcentire.app.AppContext;
+import net.mcentire.model.Appointment;
 import net.mcentire.model.User;
 import net.mcentire.repository.*;
 import net.mcentire.util.Logger;
+import net.mcentire.util.Time;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -71,7 +75,7 @@ public class LoginViewController extends BaseController {
         contextData.setContacts(new ContactRepository().getAll());
         contextData.setUsers(new UserRepository().getAll());
 
-        new SceneLoader(actionEvent).ChangeToCustomerScene();
+        new SceneLoader(actionEvent).ChangeToAppointmentScene();
 
         // Check if any relevant meetings are occurring soon
         checkUserAppointments();
@@ -81,8 +85,24 @@ public class LoginViewController extends BaseController {
         LocalDateTime timeNow = LocalDateTime.now();
         LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
 
-        //TODO: checkUserAppointments
+        var appointments = AppContext.getData().getAppointments().stream()
+                .filter(p -> {
+                    if (p.getUserId() == AppContext.getActiveUser().getId() &&
+                            p.getStart().isBefore(timeIn15Minutes) && p.getStart().isAfter(timeNow)
+                    ) {
+                        return true;
+                    }
+                    return false;
+                })
+                .toList();
 
+        // Display alert for each upcoming appointment in the next 15 minutes.
+        for (Appointment appointment : appointments) {
+            new Alert(Alert.AlertType.INFORMATION, "Upcoming appointment:\n\tAppointment ID: " + appointment.getId() + "\n\t" +
+                    "Date: " + appointment.getStart().toLocalDate() + "\n\t" +
+                    "Time: " + appointment.getStart().toLocalTime()
+            ).showAndWait();
+        }
     }
 
     /**

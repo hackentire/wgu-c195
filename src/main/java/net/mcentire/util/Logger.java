@@ -17,7 +17,7 @@ public class Logger {
      */
     public static void log (String username, boolean authenticated) {
         String message = Time.getCurrentUtcTime().toString()
-            + " UTC | Username: "
+            + " UTC | Event: Login attempt | Username: "
             + username + " | Result: "
             + (authenticated ? "Success" : "Failure") + System.lineSeparator();
         try {
