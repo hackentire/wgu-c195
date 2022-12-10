@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" style="-fx-font-family: Tahoma;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.mcentire.controller.ReportController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox VBox.vgrow="NEVER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="0.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="NEVER">
+                           <children>
+                              <Label text="Go to:" />
+                              <Button mnemonicParsing="false" onAction="#navigateAppointments" text="Appointments" />
+                              <Button mnemonicParsing="false" onAction="#navigateCustomers" text="Customers" />
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" HBox.hgrow="SOMETIMES">
+                           <children>
+                              <Label fx:id="loggedInAsLabel" text="Logged in as:" />
+                              <Button mnemonicParsing="false" onAction="#onLogOut" text="Logout" />
+                              <Button mnemonicParsing="false" onAction="#onExit" text="Exit" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0" spacing="12.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" style="-fx-font-family: Tahoma;" HBox.hgrow="SOMETIMES">
+                           <padding>
+                              <Insets left="8.0" />
+                           </padding>
+                           <children>
+                              <Label text="Reports">
+                                 <font>
+                                    <Font name="Tahoma" size="22.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="8.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" HBox.hgrow="NEVER">
+                                 <children>
+                                    <Label text="Select a Report:" />
+                                    <Button mnemonicParsing="false" onAction="#loadReport1" text="Customer Appointments" HBox.hgrow="NEVER" />
+                                    <Button mnemonicParsing="false" onAction="#loadReport2" text="Contact Schedules" HBox.hgrow="NEVER" />
+                                    <Button mnemonicParsing="false" onAction="#loadReport3" text="Customer Hours" HBox.hgrow="NEVER" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <TextArea fx:id="dataField" editable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-font: 15px &quot;Courier New&quot;;" wrapText="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" />
+               </VBox.margin>
+            </TextArea>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
