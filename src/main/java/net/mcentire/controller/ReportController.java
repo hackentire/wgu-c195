@@ -121,6 +121,7 @@ public class ReportController extends BaseController {
      */
     public void loadReport2(ActionEvent actionEvent) {
 
+        // FUNCTIONAL_INTERFACE: as Lambda: set up a custom Comparator to sort the appointments on the timeline.
         var contacts = new ContactRepository().getAll();
         var appointments = new AppointmentRepository().getAll().stream().sorted((o1, o2) -> {
             if (o1.getStart().isBefore(o2.getStart())) {

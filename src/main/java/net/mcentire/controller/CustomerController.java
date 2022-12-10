@@ -343,7 +343,7 @@ public class CustomerController extends BaseController {
          * Fix: Implemented a custom CellValueFactory which looks up the customer's division ID and retrieves its name from
          *     prefetched data in the "divisions" variable for display.
          *
-         * LAMBDA_USAGE: Callback<P,R> (a JavaFX functional interface).
+         * FUNCTIONAL_INTERFACE: in the form of a Lambda Callback<P,R> (a JavaFX functional interface).
          *     Callback type: Callback<TableColumn.CellDataFeatures<Customer, String>, ObservableValue<String>>()
          */
         customerDivisionColumn.setCellValueFactory(p -> {
@@ -396,7 +396,7 @@ public class CustomerController extends BaseController {
     }
 
     /**
-     * Handle exitting
+     * Handle exiting
      * @param actionEvent
      */
     public void onExit(ActionEvent actionEvent) {

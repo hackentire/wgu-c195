@@ -145,6 +145,7 @@ public class AppointmentController extends BaseController {
         appointmentCustomerCombo.setItems(customers);
         appointmentUserCombo.setItems(users);
 
+        // For the combobox objects, set the displayed text to be the object's .getName() value
         StringConverter<Named> converter = new StringConverter<Named>() {
             @Override
             public String toString(Named c) {
@@ -169,6 +170,11 @@ public class AppointmentController extends BaseController {
         appointmentDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         appointmentLocationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
         appointmentTypeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        /*
+        LAMBDA_USAGE:
+            Callback lambda used to set the text value of the time cells to a formatted version of the datetimes
+         */
         appointmentStartColumn.setCellValueFactory(p -> {
             String formattedDate = p.getValue().getStart().format(
                     DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT));
@@ -184,7 +190,7 @@ public class AppointmentController extends BaseController {
         appointmentContactColumn.setCellValueFactory(p -> {
             int contactId = p.getValue().getContactId();
             /*
-             * LAMBDA_USAGE: inline predicate to filter the list of Divisions
+             * LAMBDA_USAGE: inline predicate to filter the list of Contacts
              */
             List<Contact> result = new ArrayList<>();
             if (contacts.size() > 0)
@@ -200,7 +206,7 @@ public class AppointmentController extends BaseController {
         appointmentCustomerColumn.setCellValueFactory(p -> {
             int customerId = p.getValue().getCustomerId();
             /*
-             * LAMBDA_USAGE: inline predicate to filter the list of Divisions
+             * LAMBDA_USAGE: inline predicate to filter the list of Customers
              */
             List<Customer> result = new ArrayList<>();
             if (customers.size() > 0)
@@ -216,7 +222,7 @@ public class AppointmentController extends BaseController {
         appointmentUserIdColumn.setCellValueFactory(p -> {
             int userId = p.getValue().getUserId();
             /*
-             * LAMBDA_USAGE: inline predicate to filter the list of Divisions
+             * LAMBDA_USAGE: inline predicate to filter the list of Users
              */
             List<User> result = new ArrayList<>();
             if (users.size() > 0)
@@ -275,12 +281,18 @@ public class AppointmentController extends BaseController {
             appointmentTable.setItems(
                     FXCollections.observableList(
                             AppContext.getData().getAppointments().stream()
+                                    /*
+                                     * LAMBDA_USAGE: inline predicate to filter the list of appointments matching for this month
+                                     */
                                     .filter(p -> p.getStart().getMonth() == LocalDateTime.now().getMonth()).toList()));
         }
         if (selectedToggle.equals(appointmentWeekRadio)) {
             appointmentTable.setItems(
                     FXCollections.observableList(
                             AppContext.getData().getAppointments().stream()
+                                    /*
+                                     * LAMBDA_USAGE: inline predicate to filter the list of appointments matching for the next 7 days
+                                     */
                                     .filter(p -> p.getStart().isBefore(LocalDateTime.now().plusWeeks(1)) &&
                                             p.getStart().isAfter(LocalDateTime.now())).toList()));
         }
@@ -339,6 +351,9 @@ public class AppointmentController extends BaseController {
         appointmentStartTime.getEditor().setText(selectedAppointment.getStart().toLocalTime().toString());
         appointmentEndTime.getEditor().setText(selectedAppointment.getEnd().toLocalTime().toString());
 
+        /*
+         * LAMBDA_USAGE: inline predicate to filter for related contacts, users, and customers.
+         */
         OptionalInt contactIndex = IntStream.range(0, appointmentContactCombo.getItems().size())
                 .filter(i -> ((Contact) appointmentContactCombo.getItems().get(i)).getId() == selectedAppointment.getContactId()).findFirst();
         OptionalInt userIndex = IntStream.range(0, appointmentUserCombo.getItems().size())

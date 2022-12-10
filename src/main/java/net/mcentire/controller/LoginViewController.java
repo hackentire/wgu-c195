@@ -86,6 +86,9 @@ public class LoginViewController extends BaseController {
         LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
 
         var appointments = AppContext.getData().getAppointments().stream()
+                /*
+                 * LAMBDA_USAGE: inline predicate to filter the list of appointments for those starting within the next 15 minutes
+                 */
                 .filter(p -> {
                     if (p.getUserId() == AppContext.getActiveUser().getId() &&
                             p.getStart().isBefore(timeIn15Minutes) && p.getStart().isAfter(timeNow)

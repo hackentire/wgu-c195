@@ -61,3 +61,9 @@
 ****                                                                                  ****
 ******************************************************************************************
 ******************************************************************************************
+
+Additional notes:
+ - Lambda method usage can be searched with the comment tag "LAMBDA_USAGE".
+    - Used most frequently to describe callback functions used to determine the text
+    to display in a TableView Column/Cell.
+ - Functional Interface usage can be searched with the comment tag "FUNCTIONAL_INTERFACE"
