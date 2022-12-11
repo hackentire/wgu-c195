@@ -8,6 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringJoiner;
 
+/**
+ * Base repository that provides generic CRUD for type T after Overriding certain methods as a way to set up DB schema information
+ * and handle entity updates.
+ * @param <T> an entity Class having a unique ID
+ */
 public abstract class EntityRepository<T extends Identifiable> extends Repository {
     /**
      * @return the name of the entity's table

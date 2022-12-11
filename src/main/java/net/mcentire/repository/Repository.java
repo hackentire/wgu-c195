@@ -4,6 +4,9 @@ import net.mcentire.database.JDBC;
 
 import java.sql.*;
 
+/**
+ * Primitive repository class with subclasses that declare methods for interfacing the DB.
+ */
 public abstract class Repository {
     protected static Connection connection = JDBC.getConnection();
 

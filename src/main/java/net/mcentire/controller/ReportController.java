@@ -60,7 +60,9 @@ public class ReportController extends BaseController {
     }
 
     /**
-     * Report: Total # of Customers by Type and Month
+     * Loads report: Total # of Customers by Type and Month
+     * Makes use of lambda predicates to group an Appointment stream by their starting months, and iterating on the resultant
+     * Map, and grouping the Map value (a list of appointments) by Appointment type while building a report in a StringBuilder.
      * @param actionEvent
      */
     public void loadReport1(ActionEvent actionEvent) {
@@ -116,7 +118,9 @@ public class ReportController extends BaseController {
     }
 
     /**
-     * Report: Schedule for each Contact with: AppointmentID, Title, Type, Description, Start, End, and CustomerID
+     * Loads report: Schedule for each Contact with: AppointmentID, Title, Type, Description, Start, End, and CustomerID
+     * Makes use of lambda Comparator (FunctionalInterface) as a method to order appointments by starting DateTimes.
+     * The chronologically sorted Appointment list is then iterated on the build the report.
      * @param actionEvent
      */
     public void loadReport2(ActionEvent actionEvent) {
@@ -163,7 +167,7 @@ public class ReportController extends BaseController {
     }
 
     /**
-     * Report: Custom report of the total # of hours allotted to each customer
+     * Loads report: Custom report of the total # of hours allotted to each customer
      * @param actionEvent
      */
     public void loadReport3(ActionEvent actionEvent) {
@@ -199,6 +203,11 @@ public class ReportController extends BaseController {
         dataField.setText(stringBuilder.toString());
     }
 
+    /**
+     * Formats the duration in a H:MM:SS format (uncapped decimal hours i.e. 73:10:12)
+     * @param duration duration to be formatted.
+     * @return
+     */
     // https://stackoverflow.com/questions/266825/how-to-format-a-duration-in-java-e-g-format-hmmss
     private static String formatDuration(Duration duration) {
         long seconds = duration.getSeconds();

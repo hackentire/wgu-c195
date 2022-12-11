@@ -130,7 +130,20 @@ public class AppointmentController extends BaseController {
     }
 
     /**
-     * Bind UI elements for the Appointment type
+     * Binds UI elements for the Appointment type
+     * Makes use of lambda callback functions as custom cell value factories in the Appointments table.
+     * <p>
+     * For dates, these were set up to take the time value of the start and end datetimes of appointments,
+     * and formatting them in a more human-readable pattern. The callbacks trigger when their respective cells update,
+     * displaying the new, formatted value.
+     * </p><p>
+     * For Users, Contacts, and Customers, as Appointment only knows the IDs of these entities, lambda callbacks are
+     * declared to search for matching, related entities (also using lambda predicates as filters in Java Streams),
+     * and displaying a human-readable value for the entity.
+     * </p>
+     * <p>
+     * A ChangeListener lambda is declared to handle selection changes in the Appointments table in the UI.
+     * </p>
      */
     private void BindAppointmentElements() {
         AppointmentRepository repo = new AppointmentRepository();
@@ -268,8 +281,11 @@ public class AppointmentController extends BaseController {
 
     /**
      * Handle Appointment Radio filter change
-     *
+     * Lambda predicates are used to filter lists of appointments matching different time-based criteria, depending on which radio
+     * button is selected.
      * @param actionEvent the action event
+     *
+     *
      */
     public void onAppointmentRadioChange(ActionEvent actionEvent) {
         Toggle selectedToggle = appointmentViewRadioGroup.getSelectedToggle();
@@ -326,7 +342,9 @@ public class AppointmentController extends BaseController {
     }
 
     /**
-     * Handle edit appointment.
+     * Handles the edit button action
+     * Makes use of lambda functions in Java Streams to filter lists for entities (Contacts/Users/Customers) matching
+     * the respective IDs associated with the Appointment being edited.
      *
      * @param actionEvent the action event
      */
@@ -376,6 +394,7 @@ public class AppointmentController extends BaseController {
 
     /**
      * Handle appointment removal.
+     * Makes use of lambda predicate filters to delete an appointment from the DB if it's ID matches the one being targeted.
      *
      * @param actionEvent the action event
      */
@@ -400,6 +419,8 @@ public class AppointmentController extends BaseController {
 
     /**
      * Handle saving/persisting the form
+     * Makes use of a lambda predicate filter to find an appointment matching the one being updated, and removing it from
+     * a local cache, committing changes to the DB, and updating the local cache on success.
      *
      * @param actionEvent the action event
      */
@@ -540,13 +561,13 @@ public class AppointmentController extends BaseController {
              *  Start in window, end after window,
              *  Start after window, end inside
              *  Start before window and end after window
-             *  Start same as window start and end same as window end
+             *  Start same as window start and end same as window end (if adding)
              */
             if ((newStartUtc.isAfter(startUtc) && newEndUtc.isBefore(endUtc)) ||
                     (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(startUtc)) ||
                     (newStartUtc.isAfter(startUtc) && newStartUtc.isBefore(endUtc) && newEndUtc.isAfter(endUtc)) ||
                     (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(endUtc)) ||
-                    (newStartUtc.equals(startUtc) && newEndUtc.equals(endUtc))
+                    (newStartUtc.equals(startUtc) && newEndUtc.equals(endUtc) && isModifying == false)
             )
             {
                 new Alert(Alert.AlertType.ERROR, "This customer has appointments that conflict with this schedule", null).showAndWait();

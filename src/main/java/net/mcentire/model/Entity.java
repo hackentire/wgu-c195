@@ -2,6 +2,9 @@ package net.mcentire.model;
 
 //import java.time.ZonedDateTime;
 
+/**
+ * Base entity class for this domain
+ */
 public abstract class Entity implements Identifiable {
     protected int id;
     // FUTURE ENHANCEMENT: Implement auditing contexts

@@ -89,6 +89,9 @@ public class CustomerController extends BaseController {
 
     /**
      * Handle the modify button click
+     * Makes use of lambda predicate filters in Java streams of Countries and Divisions to find the Country associated with
+     * the Customer being edited, loading the Divisions associated with the Country, and selecting them in the comboboxes.
+     *
      * @param actionEvent
      */
     public void onModifyCustomer(ActionEvent actionEvent) {
@@ -137,6 +140,8 @@ public class CustomerController extends BaseController {
 
     /**
      * Handle the delete button click
+     * Makes use of lambda predicate filters in Java collection streams to select the Customer being targeted and removing
+     * it from the DB and local cache.
      * @param actionEvent
      */
     public void onDeleteCustomer(ActionEvent actionEvent) {
@@ -155,6 +160,13 @@ public class CustomerController extends BaseController {
         }
     }
 
+    /**
+     * Test if the customer is related to any existing appointments before deletion.
+     * Makes use of a lambda predicate in an Appointments stream to find all appointments associated with the customer
+     * being targeted.
+     * @param customer
+     * @return true if the customer has no dependent appointments and can be deleted.
+     */
     private boolean hasNoDependentAppointments(Customer customer) {
         var appointments = AppContext.getData().getAppointments().stream()
                 .filter(p -> p.getCustomerId() == customer.getId())
@@ -172,6 +184,8 @@ public class CustomerController extends BaseController {
 
     /**
      * Updates the division combo box with relevant divisions on country selection change
+     * Makes use of a lambda predicate for a Division stream to find all Divisions related to the Country that was
+     * selected, and loading these values as options in the Division ComboBox
      * @param actionEvent
      */
     public void onCustomerCountryChange(ActionEvent actionEvent) {
@@ -192,6 +206,8 @@ public class CustomerController extends BaseController {
 
     /**
      * Handle validating/saving/persisting appointment form changes
+     * Makes use of a lambda predicate to filter a Customers stream for the Customer in local cache matching the Customer
+     * being edited in the UI, and delete it from cache.
      * @param actionEvent
      */
     public void onSaveChangesCustomer(ActionEvent actionEvent) {
@@ -290,6 +306,9 @@ public class CustomerController extends BaseController {
 
     /**
      * Bind UI elements for the Customer type
+     * Makes use of a lambda callback function used to determine the name of the Division associated with the Customer
+     * if it exists. Also, this uses a lambda predicate to filter for the matching Division entity.
+     * A ChangeListener lambda is declared to handle selection changes in the Customer table in the UI.
      */
     private void BindCustomerElements() {
         CustomerRepository repo = new CustomerRepository();

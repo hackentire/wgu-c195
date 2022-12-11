@@ -81,14 +81,19 @@ public class LoginViewController extends BaseController {
         checkUserAppointments();
     }
 
+    /**
+     * Check if the authenticated user has any upcoming appointments
+     * Makes use of a lambda predicate to filter for appointments with userIDs matching the active user that are also starting
+     * within the next 15 minutes.
+     */
     private void checkUserAppointments() {
         LocalDateTime timeNow = LocalDateTime.now();
         LocalDateTime timeIn15Minutes = timeNow.plusMinutes(15);
 
+        boolean hasAppointment = false;
+
         var appointments = AppContext.getData().getAppointments().stream()
-                /*
-                 * LAMBDA_USAGE: inline predicate to filter the list of appointments for those starting within the next 15 minutes
-                 */
+                 // LAMBDA_USAGE: inline predicate to filter the list of appointments for those starting within the next 15 minutes
                 .filter(p -> {
                     if (p.getUserId() == AppContext.getActiveUser().getId() &&
                             p.getStart().isBefore(timeIn15Minutes) && p.getStart().isAfter(timeNow)
@@ -96,8 +101,9 @@ public class LoginViewController extends BaseController {
                         return true;
                     }
                     return false;
-                })
-                .toList();
+                }).toList();
+
+        hasAppointment = appointments.size() > 0;
 
         // Display alert for each upcoming appointment in the next 15 minutes.
         for (Appointment appointment : appointments) {
@@ -105,6 +111,11 @@ public class LoginViewController extends BaseController {
                     "Date: " + appointment.getStart().toLocalDate() + "\n\t" +
                     "Time: " + appointment.getStart().toLocalTime()
             ).showAndWait();
+        }
+
+        // Display alert if there are no appointments in the next 15 minutes.
+        if (!hasAppointment) {
+            new Alert(Alert.AlertType.INFORMATION, "No upcoming appointments in the next 15 minutes.").showAndWait();
         }
     }
 
