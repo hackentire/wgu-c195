@@ -42,19 +42,35 @@ public class ReportController extends BaseController {
 //        loggedInAsLabel.setText("Logged in as [" + AppContext.getActiveUser().getName() + "]");
     }
 
+    /**
+     * Handle user sign off
+     * @param actionEvent
+     */
     public void onLogOut(ActionEvent actionEvent) {
         AppContext.setActiveUser(null);
         new SceneLoader(actionEvent).ChangeToLoginScene();
     }
 
+    /**
+     * Handle a user exitting the application
+     * @param actionEvent
+     */
     public void onExit(ActionEvent actionEvent) {
         Platform.exit();
     }
 
+    /**
+     * Navigate to the Appointments scene
+     * @param actionEvent
+     */
     public void navigateAppointments(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToAppointmentScene();
     }
 
+    /**
+     * Navigate to the Customers scene
+     * @param actionEvent
+     */
     public void navigateCustomers(ActionEvent actionEvent) {
         new SceneLoader(actionEvent).ChangeToCustomerScene();
     }

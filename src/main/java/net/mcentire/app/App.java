@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Initial entry point for the application
+ */
 public class App extends Application {
 
     @Override

@@ -1,5 +1,8 @@
 package net.mcentire.model;
 
+/**
+ * The type Division (First-Level Divisions in the Domain)
+ */
 public class Division extends Entity {
     private String name;
     private int countryId;

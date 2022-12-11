@@ -5,6 +5,9 @@ import net.mcentire.model.Country;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Handles data operations for Countries
+ */
 public class CountryRepository extends EntityRepository<Country> {
 
     private static final String tableName = "countries";

@@ -65,7 +65,6 @@ public abstract class Repository {
          * @param sql                a String with optional placeholders ("?") for parameter insertion
          * @param returnGeneratedKey whether the function will place the generated ID (in the case of insertions) in the ResultSet result
          * @param params             Optional parameters to be inserted into the PreparedStatement
-         * @throws SQLException
          */
         public static void executeQuery(String sql, boolean returnGeneratedKey, QueryParameter... params) {
             try {

@@ -77,9 +77,6 @@ public final class AppContext {
         AppContext.resourceBundle = resourceBundle;
     }
 
-    /**
-     * The type App data.
-     */
     public static class AppData {
         private ObservableList<Customer> customers;
         private ObservableList<Appointment> appointments;

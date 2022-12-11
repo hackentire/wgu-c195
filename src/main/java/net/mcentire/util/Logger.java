@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 
+/**
+ * Writes log data to the filesystem
+ */
 public class Logger {
     /**
      * Path and filename of the log file to generate

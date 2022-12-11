@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * The type Appointment repository.
+ * Handles data operations for Appointments
  */
 public class AppointmentRepository extends EntityRepository<Appointment> {
 

@@ -8,6 +8,9 @@ import net.mcentire.model.Division;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Handles data operations for Contacts
+ */
 public class ContactRepository extends EntityRepository<Contact> {
     private static final String tableName = "contacts";
     private static final String tableIdentifier = "Contact_ID";

@@ -7,6 +7,9 @@ import net.mcentire.model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Handles data operations for Users
+ */
 public class UserRepository extends EntityRepository<User> {
 
     private static final String tableName = "users";

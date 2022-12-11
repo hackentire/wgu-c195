@@ -3,6 +3,9 @@ package net.mcentire.util;
 import java.sql.Timestamp;
 import java.time.*;
 
+/**
+ * Converts temporal objects (LocalDateTimes and SQL Timestamps) into different zones/types
+ */
 public class Time {
 
     /**

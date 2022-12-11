@@ -5,6 +5,9 @@ import net.mcentire.model.Customer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Handles data operations for Customers
+ */
 public class CustomerRepository extends EntityRepository<Customer> {
 
     private static final String tableName = "customers";

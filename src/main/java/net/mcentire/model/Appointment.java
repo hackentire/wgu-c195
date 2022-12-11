@@ -1,10 +1,6 @@
 package net.mcentire.model;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 /**
  * The type Appointment.

@@ -1,5 +1,8 @@
 package net.mcentire.model;
 
+/**
+ * The type User
+ */
 public class User extends Entity implements Named {
     private String name;
     private String password;
