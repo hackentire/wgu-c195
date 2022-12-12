@@ -19,6 +19,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -98,6 +99,7 @@ public class AppointmentController extends BaseController {
 
     private boolean isModifying = false;
     private Appointment selectedAppointment = null;
+    private int editedAppointment = -1;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -353,6 +355,7 @@ public class AppointmentController extends BaseController {
             return;
 
         isModifying = true;
+        editedAppointment = selectedAppointment.getId();
         addAppointmentButton.setDisable(false);
         editAppointmentButton.setDisable(true);
         addOrEditAppointmentLabel.setText("Modify Customer");
@@ -440,10 +443,19 @@ public class AppointmentController extends BaseController {
             id = 0;
         }
 
-        LocalDateTime startTime = LocalDateTime.of(appointmentStartDate.getValue(),
-                LocalTime.parse((String) appointmentStartTime.getEditor().getText()));
-        LocalDateTime endTime = LocalDateTime.of(appointmentEndDate.getValue(),
-                LocalTime.parse((String) appointmentEndTime.getEditor().getText()));
+        LocalDateTime startTime;
+        LocalDateTime endTime;
+
+        try {
+            startTime = LocalDateTime.of(appointmentStartDate.getValue(),
+                    LocalTime.parse((String) appointmentStartTime.getEditor().getText()));
+            endTime = LocalDateTime.of(appointmentEndDate.getValue(),
+                    LocalTime.parse((String) appointmentEndTime.getEditor().getText()));
+        } catch (DateTimeParseException e)
+        {
+            new Alert(Alert.AlertType.ERROR, "Invalid time: please verify times are input in HH:MM format.").showAndWait();
+            return;
+        }
 
         Customer tentativeCustomer = (Customer) appointmentCustomerCombo.getSelectionModel().getSelectedItem();
 
@@ -562,12 +574,14 @@ public class AppointmentController extends BaseController {
              *  Start after window, end inside
              *  Start before window and end after window
              *  Start same as window start and end same as window end (if adding)
+             *      - if modifying an existing appointment, allow window changes (provided they meet requirements above)
              */
-            if ((newStartUtc.isAfter(startUtc) && newEndUtc.isBefore(endUtc)) ||
+            if (
+                    (newStartUtc.isAfter(startUtc) && newEndUtc.isBefore(endUtc)) ||
                     (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(startUtc)) ||
                     (newStartUtc.isAfter(startUtc) && newStartUtc.isBefore(endUtc) && newEndUtc.isAfter(endUtc)) ||
                     (newStartUtc.isBefore(startUtc) && newEndUtc.isAfter(endUtc)) ||
-                    (newStartUtc.equals(startUtc) && newEndUtc.equals(endUtc) && isModifying == false)
+                    (newStartUtc.equals(startUtc) && newEndUtc.equals(endUtc) && (appointment.getId() != editedAppointment))
             )
             {
                 new Alert(Alert.AlertType.ERROR, "This customer has appointments that conflict with this schedule", null).showAndWait();
@@ -620,6 +634,7 @@ public class AppointmentController extends BaseController {
     public void onCancelChangesAppointment(ActionEvent actionEvent) {
         clearAppointmentForm();
         selectedAppointment = null;
+        editedAppointment = -1;
         appointmentTable.getSelectionModel().clearSelection();
         appointmentSplitPane.setDividerPositions(1);
         addAppointmentButton.setDisable(false);
